@@ -1,0 +1,81 @@
+  .ant-layout {
+    height: 100%;
+  }
+  .ant-layout-header{
+    height: 38px;
+    line-height: 38px;
+  }
+  
+  .header {
+    padding: 0;
+    display: flex;
+  }
+  
+  .logo {
+    width: 200px;
+    height: 38px;
+    background: url('~@/assets/images/logo.png') no-repeat center / 200px auto;
+  }
+
+  .menu-list{
+    width: calc(100vw - 200px);
+    height: 38px;
+    line-height: 38px;
+    display: flex;
+  }
+
+  .menu-item{
+    width: 128px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    background-color: #f8f8f8;
+    color: #1890ff;
+    position: relative;
+    margin-right: 2px;
+    cursor: pointer;
+  }
+
+  .menu-active{
+    background-color: #1890ff;
+    color: #fff;
+  }
+
+  .menu-pop{
+    position: absolute;
+    right: 2px;
+    top: 7px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    cursor: pointer;
+  }
+  
+  .layout-content {
+    overflow-y: auto;
+  }
+  
+  .user-info {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding-right: 20px;
+    color: #fff;
+  
+    .user-name {
+      margin-right: 20px;
+    }
+  
+    .user-logout {
+      display: inline-block;
+      cursor: pointer;
+    }
+  }
+  .ant-layout-header {
+    padding: 0 !important;
+  }
+  
