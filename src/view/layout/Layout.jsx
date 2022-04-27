@@ -124,23 +124,17 @@ function RootLayout () {
   // 关闭顶部显示菜单
   const tabClose = (ids) => {
     const tabWithout = openMenuData.filter( openID => openID.url !== ids)
+    const activeWithout = tabWithout.filter( activeID => activeID.url === activeMenuID)
     setOpenMenuData(tabWithout)
-    containIDs(tabWithout, activeMenuID)
-  }
-
-  // 是否包含对象
-  const containIDs = (tabWithout, key) => {
-    tabWithout.find(item => {
-      if(item.url === key ){
-        setActiveMenuID(key)
-      } else {
-        setActiveMenuID(tabWithout[0]['url'])
-      } 
-      return false
-    })
     if(tabWithout.length === 0){
       setActiveMenuID('/')
       navigate('/')
+    }else{
+      if(activeWithout.length > 0){
+        setActiveMenuID(activeMenuID)
+      } else {
+        setActiveMenuID(tabWithout[0]['url'])
+      }
     }
   }
 
