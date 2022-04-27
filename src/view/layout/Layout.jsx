@@ -20,6 +20,9 @@ function RootLayout () {
   // Tab存储仓库
   const [ openMenuData, setOpenMenuData ] = useState([])
   const [ activeMenuID, setActiveMenuID ] = useState('')
+  // 面包屑导航
+  const [ brad, setBrad ] =  useState('')
+  const [ bradMenu, setBradMenu ] = useState('')
   
   // 图标显示
   const iconfont = (name) => {
@@ -39,6 +42,7 @@ function RootLayout () {
         navigate(lastKeys)
         setActiveMenuID(lastKeys)
         menuData(lastKeys)
+        bread(lastKeys)
       } else {
         onPublish()
       }
@@ -50,6 +54,7 @@ function RootLayout () {
     setSelectKey([e.key])
     setActiveMenuID(e.key)
     menuData(e.key)
+    bread(e.key)
   }
 
   // 初次渲染选中首页，刷新选中当前菜单
@@ -62,6 +67,7 @@ function RootLayout () {
       setSelectKey([pathname])
       setActiveMenuID(pathname)
       menuData(pathname)
+      bread(pathname)
     }    
   }, [])
 
@@ -70,8 +76,9 @@ function RootLayout () {
     setOpenKeys([ '/home', '/'])
     setActiveMenuID('/')
     setSelectKey(['/'])
-    navigate('/')
     menuData('/')
+    navigate('/')
+    bread('/')
   }
 
   // 顶部选中菜单数据（有个小功能待完善）
@@ -118,6 +125,7 @@ function RootLayout () {
   // 点击的菜单顶部显示
   const tabClick = (ids) => {
     setActiveMenuID(ids)
+    bread(ids)
     navigate(ids)
   }
 
@@ -135,6 +143,26 @@ function RootLayout () {
       } else {
         setActiveMenuID(tabWithout[0]['url'])
       }
+    }
+  }
+
+  // 面包屑导航数据
+  const bread = (url) => {
+    const key = '/' + url.split('/')[1]
+    if(key !== '/' && key !== '/home'){
+      defaultData.find(item => {
+        return item.children.length && item.children.find(child => {
+          if(child.url === url){
+            setBrad(child.title)
+          }
+          return false
+        })
+      })
+      const menu = defaultData.find(item => item.url === key)
+      setBradMenu(menu.title)
+    }else{
+      setBrad('')
+      setBradMenu('')
     }
   }
 
@@ -193,10 +221,10 @@ function RootLayout () {
           {/* 面包屑 */}
           <Breadcrumb style={{margin:'8px 0'}}>
             <Breadcrumb.Item>
-              <Link to="/">Home</Link>
+              <Link to="/">首页</Link>
             </Breadcrumb.Item>
-            <Breadcrumb.Item>List</Breadcrumb.Item>
-            <Breadcrumb.Item>App</Breadcrumb.Item>
+            <Breadcrumb.Item>{ bradMenu }</Breadcrumb.Item>
+            <Breadcrumb.Item>{ brad }</Breadcrumb.Item>
           </Breadcrumb>
           {/* 二级路由出口 */}
           <Outlet />
