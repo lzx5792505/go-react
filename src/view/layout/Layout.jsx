@@ -37,6 +37,8 @@ function RootLayout () {
       setSelectKey([lastKeys])
       if( keys !== '/home'){
         navigate(lastKeys)
+        setActiveMenuID(lastKeys)
+        menuData(lastKeys)
       } else {
         onPublish()
       }
@@ -47,7 +49,6 @@ function RootLayout () {
   const onClickMenu = (e) => {
     setSelectKey([e.key])
     setActiveMenuID(e.key)
-    // 获取值
     menuData(e.key)
   }
 
@@ -123,16 +124,22 @@ function RootLayout () {
   // 关闭顶部显示菜单
   const tabClose = (ids) => {
     const tabWithout = openMenuData.filter( openID => openID.url !== ids)
-    const activeWithout = openMenuData.filter( openID => openID.url === activeMenuID)
     setOpenMenuData(tabWithout)
-    if(tabWithout.length > 0){
-      if(activeWithout.length > 0){
-        setActiveMenuID(activeWithout[0]['url'])
-      }else{
+    containIDs(tabWithout, activeMenuID)
+  }
+
+  // 是否包含对象
+  const containIDs = (tabWithout, key) => {
+    tabWithout.find(item => {
+      if(item.url === key ){
+        setActiveMenuID(key)
+      } else {
         setActiveMenuID(tabWithout[0]['url'])
-      }
-    }else{
-      setActiveMenuID('')
+      } 
+      return false
+    })
+    if(tabWithout.length === 0){
+      setActiveMenuID('/')
       navigate('/')
     }
   }

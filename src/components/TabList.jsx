@@ -1,7 +1,7 @@
 import React from 'react';
 import  PropTypes  from 'prop-types';
 import classNames from 'classnames';
-
+import { CloseCircleOutlined  } from '@ant-design/icons'
 
 export default function TabList({ item, activeId, onTabClick, onCloseTab }) {
     return (
@@ -15,7 +15,9 @@ export default function TabList({ item, activeId, onTabClick, onCloseTab }) {
                     return (
                         <div key={ item.id } className={fClassname} onClick={(e) => {e.preventDefault();e.stopPropagation();onTabClick(item.url)}}>
                             {item.title}
-                            <div className="menu-pop" onClick={(e) => {e.preventDefault();e.stopPropagation();onCloseTab(item.url)}}>X</div>
+                            <div className="menu-pop close-icon" onClick={(e) => {e.preventDefault();e.stopPropagation();onCloseTab(item.url)}}>
+                                <CloseCircleOutlined  />
+                            </div>
                         </div>
                     )
                 })
