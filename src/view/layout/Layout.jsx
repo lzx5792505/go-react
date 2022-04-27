@@ -16,55 +16,54 @@ function RootLayout () {
   const { Header, Sider } = Layout
   const [ openKeys, setOpenKeys ] = useState([])
   const [ selectKey, setSelectKey ] = useState([])
-
   // Tab存储仓库
   const [ openMenuData, setOpenMenuData ] = useState([])
   const [ activeMenuID, setActiveMenuID ] = useState('')
   // 面包屑导航
   const [ brad, setBrad ] =  useState('')
   const [ bradMenu, setBradMenu ] = useState('')
-  
   // 图标显示
-  const iconfont = (name) => {
+  const iconfont = name => {
     return React.createElement(Icon[name])
   }
 
   // 选中一级菜单
-  const onOpenChange = (path) => {
-    if(path === '/'){ // 切换首页情况
+  const onOpenChange = path => {
+    // 切换首页情况
+    if(path === '/'){
       onPublish()
-    }else if(path.length > 1){ // 设置选中菜单
-      const keys = path[ path.length - 1 ]
-      const lastKeys = keys + '/' + keys.substring(1)
-      setOpenKeys([ keys, lastKeys])
-      setSelectKey([lastKeys])
-      if( keys !== '/home'){
-        navigate(lastKeys)
-        setActiveMenuID(lastKeys)
-        menuData(lastKeys)
-        bread(lastKeys)
-      } else {
-        onPublish()
-      }
+    }
+    // 切换选中菜单
+    const keys = path[ path.length - 1 ]
+    const lastKeys = keys + '/' + keys.substring(1)
+    setOpenKeys([ keys, lastKeys ])
+    setSelectKey([ lastKeys ])
+    if(keys !== '/home'){
+      setActiveMenuID(lastKeys)
+      menuData(lastKeys)
+      bread(lastKeys)
+      navigate(lastKeys)
+    }else{
+      onPublish()
     }
   }
   
   // 点击菜单
-  const onClickMenu = (e) => {
-    setSelectKey([e.key])
+  const onClickMenu = e => {
+    setSelectKey([ e.key ])
     setActiveMenuID(e.key)
     menuData(e.key)
     bread(e.key)
   }
 
-  // 初次渲染选中首页，刷新选中当前菜单
+  // 初次渲染选中首页，刷新选中当前菜单 （刷新后菜单保存只有一个，需重写）
   useEffect(() => {
     const keys = '/' + pathname.split('/')[1]
     if(keys === '/'){
       onPublish()
-    }else {
+    }else{
       setOpenKeys([ keys, pathname ])
-      setSelectKey([pathname])
+      setSelectKey([ pathname ])
       setActiveMenuID(pathname)
       menuData(pathname)
       bread(pathname)
@@ -73,22 +72,20 @@ function RootLayout () {
 
   // 跳转公共方法
   const onPublish = () => {
-    setOpenKeys([ '/home', '/'])
+    setOpenKeys([ '/home', '/' ])
+    setSelectKey([ '/' ])
     setActiveMenuID('/')
-    setSelectKey(['/'])
     menuData('/')
-    navigate('/')
     bread('/')
+    navigate('/')
   }
 
-  // 顶部选中菜单数据（有个小功能待完善）
-  const menuData = (key) => {
+  // 顶部选中菜单数据
+  const menuData = key => {
     defaultData.find(item => {
       return item.children.length && item.children.find(child => {
-        if(child.url === key){
-          if(!openMenuData.includes(child)){
-            setOpenMenuData([ ...openMenuData, child ])
-          }
+        if(child.url === key && !openMenuData.includes(child)){
+          setOpenMenuData([ ...openMenuData, child ])
         }
         return false
       })
@@ -96,8 +93,8 @@ function RootLayout () {
   }
 
   // 渲染父级菜单
-  const renderMenu = (item) => {
-    const {title, url, icon, children} =  item
+  const renderMenu = item => {
+    const { title, url, icon, children } =  item
     return (
       <Menu.SubMenu key={ url } icon={ icon && iconfont(icon) } title={ title }>
         {
@@ -113,8 +110,8 @@ function RootLayout () {
   }
 
   // 渲染子级菜单
-  const renderMenuItem = (item) => {
-    const {title, url, icon} =  item
+  const renderMenuItem = item => {
+    const { title, url, icon } =  item
     return (
       <Menu.Item icon={ icon && iconfont(icon) } key={ url }>
         <Link to={ url }>{ title }</Link>
@@ -122,32 +119,30 @@ function RootLayout () {
     )
   }
 
-  // 点击的菜单顶部显示
-  const tabClick = (ids) => {
+  // 点击菜单顶部显示
+  const tabClick = ids => {
     setActiveMenuID(ids)
     bread(ids)
     navigate(ids)
   }
 
-  // 关闭顶部显示菜单
-  const tabClose = (ids) => {
-    const tabWithout = openMenuData.filter( openID => openID.url !== ids)
-    const activeWithout = tabWithout.filter( activeID => activeID.url === activeMenuID)
+  // 关闭顶部菜单显示
+  const tabClose = ids => {
+    const tabWithout = openMenuData.filter( openID => openID.url !== ids )
+    const activeWithout = tabWithout.filter( activeID => activeID.url === activeMenuID )
     setOpenMenuData(tabWithout)
     if(tabWithout.length === 0){
       setActiveMenuID('/')
       navigate('/')
-    }else{
-      if(activeWithout.length > 0){
+    } else if(activeWithout.length > 0){
         setActiveMenuID(activeMenuID)
-      } else {
-        setActiveMenuID(tabWithout[0]['url'])
-      }
+    } else {
+      setActiveMenuID(tabWithout[0]['url'])
     }
   }
 
   // 面包屑导航数据
-  const bread = (url) => {
+  const bread = url => {
     const key = '/' + url.split('/')[1]
     if(key !== '/' && key !== '/home'){
       defaultData.find(item => {
@@ -160,7 +155,7 @@ function RootLayout () {
       })
       const menu = defaultData.find(item => item.url === key)
       setBradMenu(menu.title)
-    }else{
+    } else {
       setBrad('')
       setBradMenu('')
     }
