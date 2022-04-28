@@ -221,7 +221,7 @@ function RootLayout () {
             <Breadcrumb.Item>{ bradMenu }</Breadcrumb.Item>
             <Breadcrumb.Item>{ brad }</Breadcrumb.Item>
           </Breadcrumb>
-          <Divider dashed  className="divider"/>
+          <Divider className="divider"/>
           {/* 二级路由出口 */}
           <Outlet />
         </Layout>
