@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Outlet, Link, useLocation as Pathies, useNavigate as  Navigate} from 'react-router-dom'
-import { Layout, Menu, Popconfirm, Breadcrumb } from 'antd'
+import { Layout, Menu, Popconfirm, Breadcrumb, Divider } from 'antd'
 import TabList from '../../components/TabList'
 import { observer } from 'mobx-react-lite'
 import * as Icon from '@ant-design/icons'
@@ -221,6 +221,7 @@ function RootLayout () {
             <Breadcrumb.Item>{ bradMenu }</Breadcrumb.Item>
             <Breadcrumb.Item>{ brad }</Breadcrumb.Item>
           </Breadcrumb>
+          <Divider dashed  className="divider"/>
           {/* 二级路由出口 */}
           <Outlet />
         </Layout>

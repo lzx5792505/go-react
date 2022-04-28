@@ -2,8 +2,8 @@
     height: 100%;
   }
   .ant-layout-header{
-    height: 32px;
-    line-height: 32px;
+    height: 36px;
+    line-height: 36px;
   }
   
   .header {
@@ -13,19 +13,19 @@
   
   .logo {
     width: 200px;
-    height: 32px;
+    height: 36px;
     background: url('~@/assets/images/logo.png') no-repeat center / 200px auto;
   }
 
   .menu-list{
     width: calc(100vw - 200px);
-    height: 32px;
-    line-height: 32px;
+    height: 36px;
+    line-height: 36px;
     display: flex;
   }
 
   .menu-item{
-    width: 108px;
+    width: 128px;
     height: 100%;
     display: flex;
     justify-content: center;
@@ -90,5 +90,10 @@
 
   .menu-item.menu-active .close-icon{
       visibility: visible;
+  }
+
+  .divider{
+    color: #1890ff;
+    background-color: #1890ff;
   }
   
