@@ -1,20 +1,19 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import 'moment/locale/zh-cn'
+import React, { useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import locale from 'antd/es/date-picker/locale/zh_CN'
+import { useNavigate } from 'react-router-dom'
+import useKeyPress from '../../hooks/useKeyPress';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
-import { Table, Tag, Space, Card, Form, Button, Radio, DatePicker, Select } from 'antd'
+import { Table, Switch, Space,Row, Col, Card, Form, Button, Input } from 'antd'
 
 function UserList() {
-  const { Option } = Select
-  const { RangePicker } = DatePicker
   const navigate = useNavigate()
-  const [ siteInfo, setSiteInfo ] = useState({
+  const [ form ] = Form.useForm()
+  const enterPressed = useKeyPress(13)
+  const [ userList, setUserList ] = useState({
     list:[],
     count:0
   })
-  const [paramies, setParamies] = useState({
+  const [pageData, setPageData] = useState({
     page:1,
     pre_page:10
   })
@@ -23,45 +22,54 @@ function UserList() {
   const columns = [
     {
       title: '账号',
-      dataIndex: 'title',
-      width: 220
+      dataIndex: 'user',
+      align:'center'
     },
     {
       title: '昵称',
-      dataIndex: 'pubdate'
+      dataIndex: 'name',
+      align:'center'
     },
     {
       title: '所属组',
-      dataIndex: 'read_count'
+      dataIndex: 'title',
+      align:'center'
     },
     {
       title: '登陆次数',
-      dataIndex: 'comment_count'
+      dataIndex: 'login_count',
+      align:'center',
+      defaultSortOrder:'descend'
     },
     {
-      title: '登录IP',
-      dataIndex: 'like_count'
+      title: '最后登录IP',
+      dataIndex: 'last_login_ip',
+      align:'center',
+      defaultSortOrder:'descend'
     },
     {
       title: '最后登录时间',
-      dataIndex: 'like_count'
+      dataIndex: 'last_login_time',
+      align:'center'
     },
     {
       title: '操作',
+      align:'center',
       render: data => {
         return (
           <Space size="middle">
+            <Switch checkedChildren="开启" unCheckedChildren="禁用" onChange={onSwitchChange} />
             <Button
               type="primary"
               shape="circle"
               icon={<EditOutlined />}
-              onClick={ () => goPublish(data) }/>
+              onClick={ () => goPublish(data.id) }/>
             <Button
               type="primary"
               danger
               shape="circle"
               icon={<DeleteOutlined />}
-              onClick={ () => delData(data) }/>
+              onClick={ () => delData(data.id) }/>
           </Space>
         )
       },
@@ -69,16 +77,48 @@ function UserList() {
     }
   ]
 
-  const onFinish = () => {
+  useEffect(() => {
+    setUserList({
+      list:[
+        {
+          id:1,
+          user:'测试数据',
+          name:'测试名称',
+          title:'超级管理员',
+          login_count:1,
+          last_login_ip:'127.0.0.1',
+          last_login_time:'2022-04-28'
+        }
+      ],
+      count:1
+    })
+  },[])
 
+  useEffect(() => {
+    const search = form.getFieldValue('search')
+    if(enterPressed && search.length > 0){
+      onFinish(search)
+    }
+  },[ enterPressed ])
+
+  const showUserModal = () => {
+    navigate('/user/edit')
   }
 
-  const goPublish = () => {
-
+  const onFinish = value => {
+    console.log(value);
   }
 
-  const delData = () => {
+  const onSwitchChange = data => {
+    console.log(data);
+  }
 
+  const goPublish = id => {
+    navigate('/user/edit?id=' + id)
+  }
+
+  const delData = id => {
+    navigate('/user/delete?id=' + id)
   }
 
   const pageChange = () => {
@@ -89,51 +129,47 @@ function UserList() {
     <div>
       <Card>
         <Form
+          layout="horizontal"
           onFinish={ onFinish }
-          initialValues={{ status: -1 }}>
-          <Form.Item label="状态" name="status">
-            <Radio.Group>
-              <Radio value={-1}>全部</Radio>
-              <Radio value={0}>草稿</Radio>
-              <Radio value={1}>待审核</Radio>
-              <Radio value={2}>审核通过</Radio>
-              <Radio value={3}>审核失败</Radio>
-            </Radio.Group>
-          </Form.Item>
-
-          <Form.Item label="频道" name="channel_id">
-            <Select
-              placeholder="请选择文章频道"
-              style={{ width: 120 }}
-            >
-              
-              <Option value="1" key="1">111</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item label="日期" name="date">
-            <RangePicker locale={locale}></RangePicker>
-          </Form.Item>
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit" style={{ marginLeft: 80 }}>
-              筛选
-            </Button>
-          </Form.Item>
+          initialValues={{ status: -1 }}
+          form={ form }
+        >
+            <Row gutter={24}>
+              <Col span={3} key="1">
+                <Form.Item name="search">
+                    <Input size='large' placeholder='请输账号 或者 昵称' />
+                </Form.Item>
+              </Col>
+              <Form.Item>
+                <Button type="primary" htmlType="submit" style={{ marginTop:5}}>
+                  搜索
+                </Button>
+              </Form.Item>
+              <Form.Item>
+                <Button 
+                  type="primary" 
+                  danger  
+                  style={{ marginLeft: 10,marginTop:5}}
+                  onClick={ (e) => {e.preventDefault();e.stopPropagation();showUserModal()}}
+                >
+                  添加
+                </Button>
+              </Form.Item>
+            </Row>
         </Form>
       </Card>
     {/* 文章列表区域 */}
-    <Card title={`根据筛选条件共查询到 ${siteInfo.count} 条结果：`}>
+    <Card title={`根据筛选条件共查询到 ${userList.count} 条结果：`}>
       <Table
         rowKey="id"
         columns={columns}
-        dataSource={siteInfo.list}
+        dataSource={userList.list}
         pagination={
           {
-            pageSize: paramies.pre_page,
-            total: siteInfo.count,
+            pageSize: pageData.pre_page,
+            total: userList.count,
             onChange:pageChange,
-            current: paramies.page
+            current: pageData.page
           }
         }
         bordered
