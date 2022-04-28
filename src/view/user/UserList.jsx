@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import 'moment/locale/zh-cn'
 import { observer } from 'mobx-react-lite'
-import img404 from '@/assets/images/error.png'
 import locale from 'antd/es/date-picker/locale/zh_CN'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { Table, Tag, Space, Card, Form, Button, Radio, DatePicker, Select } from 'antd'
@@ -20,39 +19,31 @@ function UserList() {
     pre_page:10
   })
 
+  // 列表字段
   const columns = [
     {
-      title: '封面',
-      dataIndex: 'cover',
-      width: 120,
-      render: cover => {
-        return <img src={cover.images[0] || img404} width={80} height={60} alt="" />
-      }
-    },
-    {
-      title: '标题',
+      title: '账号',
       dataIndex: 'title',
       width: 220
     },
     {
-      title: '状态',
-      dataIndex: 'status',
-      render: data => formatStatus(data)
-    },
-    {
-      title: '发布时间',
+      title: '昵称',
       dataIndex: 'pubdate'
     },
     {
-      title: '阅读数',
+      title: '所属组',
       dataIndex: 'read_count'
     },
     {
-      title: '评论数',
+      title: '登陆次数',
       dataIndex: 'comment_count'
     },
     {
-      title: '点赞数',
+      title: '登录IP',
+      dataIndex: 'like_count'
+    },
+    {
+      title: '最后登录时间',
       dataIndex: 'like_count'
     },
     {
@@ -77,15 +68,6 @@ function UserList() {
       fixed: 'right'
     }
   ]
-
-  const formatStatus = (type) => {
-    const TYPES = {
-      1: <Tag color="red">审核失败</Tag>,
-      2: <Tag color="green">审核成功</Tag>
-    }
-    return TYPES[type]
-  }
-
 
   const onFinish = () => {
 
