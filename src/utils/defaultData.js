@@ -46,15 +46,9 @@ const defaultData = [
         icon: 'SettingOutlined',
         children:[
             {
-              id: '8',
-              title: '清除缓存',
-              url: '/site/site',
-              icon: 'ClearOutlined',
-            },
-            {
               id: '9',
               title: '菜单管理',
-              url: '/site/menu',
+              url: '/site/site',
               icon: 'MenuOutlined',
             },
             {

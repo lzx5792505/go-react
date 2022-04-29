@@ -12,7 +12,6 @@ import User  from './../view/user/UserList'
 import UserEdit  from './../view/user/UserEdit'
 import GroupList from './../view/user/GroupList'
 import GroupEdit from './../view/user/GroupEdit'
-import SiteCache from './../view/setting/SiteCache'
 import SiteConfig from './../view/setting/SiteConfig'
 import SiteMenu from './../view/setting/SiteMenu'
 import SiteLog from './../view/setting/SiteLog'
@@ -36,8 +35,7 @@ export default function RootRouter() {
               <Route path='/user/groupList' element={<GroupList />}></Route>
               <Route path='/user/groupEdit' element={<GroupEdit />}></Route>
               {/* 系统 */}
-              <Route path='/site/site' element={<SiteCache />}></Route>
-              <Route path='/site/menu' element={<SiteMenu />}></Route>
+              <Route path='/site/site' element={<SiteMenu />}></Route>
               <Route path='/site/log' element={<SiteLog />}></Route>
               <Route path='/site/config' element={<SiteConfig />}></Route>
               {/* 内容 */}

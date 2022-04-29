@@ -8,11 +8,11 @@ import '@/assets/scss/layout.scss'
 
 // 模拟数据，写后端在引入真实数据
 import defaultData from '../../utils/defaultData'
+const { LogoutOutlined, ClearOutlined  } = Icon
 
 function RootLayout () {
   const navigate = Navigate()
   const { pathname } = Pathies()
-  const { LogoutOutlined } = Icon
   const { Header, Sider } = Layout
   const [ openKeys, setOpenKeys ] = useState([])
   const [ selectKey, setSelectKey ] = useState([])
@@ -32,19 +32,19 @@ function RootLayout () {
     // 切换首页情况
     if(path === '/'){
       onPublish()
-    }
-    // 切换选中菜单
-    const keys = path[ path.length - 1 ]
-    const lastKeys = keys + '/' + keys.substring(1)
-    setOpenKeys([ keys, lastKeys ])
-    setSelectKey([ lastKeys ])
-    if(keys !== '/home'){
-      setActiveMenuID(lastKeys)
-      menuData(lastKeys)
-      bread(lastKeys)
-      navigate(lastKeys)
-    }else{
-      onPublish()
+    } else if(path.length > 1){ // 切换选中菜单
+      const keys = path[ path.length - 1 ]
+      const lastKeys = keys + '/' + keys.substring(1)
+      setOpenKeys([ keys, lastKeys ])
+      setSelectKey([ lastKeys ])
+      if(keys !== '/home'){
+        setActiveMenuID(lastKeys)
+        menuData(lastKeys)
+        bread(lastKeys)
+        navigate(lastKeys)
+      }else{
+        onPublish()
+      }
     }
   }
   
@@ -163,6 +163,12 @@ function RootLayout () {
 
   // 退出方法
   const onConfirm = () => {
+    console.log('config');
+  }
+
+  //清除缓存
+  const onClear = () => {
+    console.log('clear');
   }
 
   return (
@@ -179,6 +185,16 @@ function RootLayout () {
         </div>
         <div className="user-info">
           <span className="user-name">111</span>
+          <span className="user-clear">
+            <Popconfirm
+            onConfirm={onClear}
+              title="是否确认清除缓存？" 
+              okText="确定" 
+              cancelText="取消"
+            >
+              <ClearOutlined  /> 清除缓存
+            </Popconfirm>
+          </span>
           <span className="user-logout">
             <Popconfirm
             onConfirm={onConfirm}
