@@ -13,7 +13,7 @@ function UserList() {
     list:[],
     count:0
   })
-  const [pageData, setPageData] = useState({
+  const [paramies, setParamies] = useState({
     page:1,
     pre_page:10
   })
@@ -119,7 +119,12 @@ function UserList() {
   }
 
   const onFinish = value => {
-    console.log(value);
+    const {search } = value
+    const _params = {}
+    if(search !== -1){
+      _params.search = search
+    }
+    setParamies({ ...paramies, ..._params })
   }
 
   const delData = id => {
@@ -175,10 +180,10 @@ function UserList() {
         dataSource={userList.list}
         pagination={
           {
-            pageSize: pageData.pre_page,
+            pageSize: paramies.pre_page,
             total: userList.count,
             onChange:pageChange,
-            current: pageData.page
+            current: paramies.page
           }
         }
         bordered

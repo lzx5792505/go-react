@@ -9,6 +9,7 @@ function GroupList() {
   const navigate = useNavigate()
   const [ form ] = Form.useForm()
   const enterPressed = useKeyPress(13)
+  const [ paramies, setParamies ] = useState([])
   const [ groupList, setGroupList ] = useState({
     list:[],
     count:0
@@ -92,7 +93,12 @@ function GroupList() {
   }
 
   const onFinish = value => {
-    console.log(value);
+    const {search } = value
+    const _params = {}
+    if(search !== -1){
+      _params.search = search
+    }
+    setParamies({ ...paramies, ..._params })
   }
 
   const delData = id => {
