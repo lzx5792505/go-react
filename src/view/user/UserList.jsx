@@ -53,12 +53,21 @@ function UserList() {
       align:'center'
     },
     {
+      title: '是否禁用',
+      dataIndex: 'status',
+      align:'center',
+      render:title => (
+        <>
+          <Switch checkedChildren="开启" unCheckedChildren="禁用" onChange={onSwitchChange} />
+        </>
+      ),
+    },
+    {
       title: '操作',
       align:'center',
       render: data => {
         return (
           <Space size="middle">
-            <Switch checkedChildren="开启" unCheckedChildren="禁用" onChange={onSwitchChange} />
             <Button
               type="primary"
               shape="circle"
@@ -102,19 +111,15 @@ function UserList() {
   },[ enterPressed ])
 
   const showUserModal = () => {
-    navigate('/user/edit')
+    navigate('/user/userEdit')
+  }
+
+  const goPublish = id => {
+    navigate('/user/userEdit?id=' + id)
   }
 
   const onFinish = value => {
     console.log(value);
-  }
-
-  const onSwitchChange = data => {
-    console.log(data);
-  }
-
-  const goPublish = id => {
-    navigate('/user/edit?id=' + id)
   }
 
   const delData = id => {
@@ -123,6 +128,10 @@ function UserList() {
 
   const pageChange = () => {
 
+  }
+
+  const onSwitchChange = data => {
+    console.log(data);
   }
   
   return (
@@ -159,7 +168,7 @@ function UserList() {
         </Form>
       </Card>
     {/* 文章列表区域 */}
-    <Card title={`根据筛选条件共查询到 ${userList.count} 条结果：`}>
+    <Card>
       <Table
         rowKey="id"
         columns={columns}

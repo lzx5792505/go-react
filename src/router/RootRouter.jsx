@@ -11,6 +11,7 @@ import Article from './../view/article/ArticleList'
 import User  from './../view/user/UserList'
 import UserEdit  from './../view/user/UserEdit'
 import GroupList from './../view/user/GroupList'
+import GroupEdit from './../view/user/GroupEdit'
 import SiteCache from './../view/setting/SiteCache'
 import SiteConfig from './../view/setting/SiteConfig'
 import SiteMenu from './../view/setting/SiteMenu'
@@ -31,8 +32,9 @@ export default function RootRouter() {
               <Route path='/home/info' element={<SiteInfo />}></Route>
               {/* 用户 */}
               <Route path='/user/user' element={<User />}></Route>
-              <Route path='/user/edit' element={<UserEdit />}></Route>
+              <Route path='/user/userEdit' element={<UserEdit />}></Route>
               <Route path='/user/groupList' element={<GroupList />}></Route>
+              <Route path='/user/groupEdit' element={<GroupEdit />}></Route>
               {/* 系统 */}
               <Route path='/site/site' element={<SiteCache />}></Route>
               <Route path='/site/menu' element={<SiteMenu />}></Route>
