@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import UserEdit from './UserEdit';
 import { observer } from 'mobx-react-lite'
 import { useNavigate } from 'react-router-dom'
 import useKeyPress from '../../hooks/useKeyPress';
@@ -86,6 +87,7 @@ function UserList() {
     }
   ]
 
+  // 初始化获取数据
   useEffect(() => {
     setUserList({
       list:[
@@ -103,6 +105,7 @@ function UserList() {
     })
   },[])
 
+  // 回车搜索
   useEffect(() => {
     const search = form.getFieldValue('search')
     if(enterPressed && search.length > 0){
@@ -110,14 +113,7 @@ function UserList() {
     }
   },[ enterPressed ])
 
-  const showUserModal = () => {
-    navigate('/user/userEdit')
-  }
-
-  const goPublish = id => {
-    navigate('/user/userEdit?id=' + id)
-  }
-
+  // 提交搜索
   const onFinish = value => {
     const {search } = value
     const _params = {}
@@ -127,17 +123,44 @@ function UserList() {
     setParamies({ ...paramies, ..._params })
   }
 
+  // 删除数据
   const delData = id => {
     navigate('/user/delete?id=' + id)
   }
 
+  // 点击分页
   const pageChange = () => {
 
   }
 
+  // 是否禁用
   const onSwitchChange = data => {
     console.log(data);
   }
+
+  // 抽屉式数据
+  const [ visible, setVisible ] =  useState(false)
+  const [ userID, setUserID ] =  useState('')
+  // 新增用户
+  const showUserModal = () => {
+    setUserID('')
+    setVisible(true)
+  }
+  // 编辑用户
+  const goPublish = id => {
+    setUserID(id)
+    setVisible(true)
+  }
+  // 保存用户
+  const onFinishModal = data => {
+    console.log(data);
+  }
+  // 关闭抽屉页面
+  const onCloseModal = () => {
+    setUserID('')
+    setVisible(false)
+      
+  };
   
   return (
     <div>
@@ -189,6 +212,12 @@ function UserList() {
         bordered
       />
     </Card>
+    <UserEdit 
+      userID={ userID }
+      activeVisible={ visible }
+      onFinishModal={onFinishModal}
+      onCloseModal={ onCloseModal }
+    />
   </div>
   )
 }
