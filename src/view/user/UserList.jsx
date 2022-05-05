@@ -109,12 +109,12 @@ function UserList() {
   useEffect(() => {
     const search = form.getFieldValue('search')
     if(enterPressed && search.length > 0){
-      onFinish(search)
+      onSearch(search)
     }
   },[ enterPressed ])
 
   // 提交搜索
-  const onFinish = value => {
+  const onSearch = value => {
     const {search } = value
     const _params = {}
     if(search !== -1){
@@ -152,8 +152,10 @@ function UserList() {
     setVisible(true)
   }
   // 保存用户
-  const onFinishModal = data => {
-    console.log(data);
+  const onFinishModal = value => {
+    console.log(userID);
+    console.log(value);
+    setVisible(false)
   }
   // 关闭抽屉页面
   const onCloseModal = () => {
@@ -167,7 +169,7 @@ function UserList() {
       <Card>
         <Form
           layout="horizontal"
-          onFinish={ onFinish }
+          onFinish={ onSearch }
           initialValues={{ status: -1 }}
           form={ form }
         >

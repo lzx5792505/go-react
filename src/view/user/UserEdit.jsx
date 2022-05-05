@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Drawer, Form, Button, Input, Space, Radio, Select } from 'antd';
+import { Drawer, Form, Button, Input, Radio, Select } from 'antd';
 
 export default function UserEdit({ userID, activeVisible, onCloseModal, onFinishModal }) {
   const { Option } = Select
@@ -38,14 +38,6 @@ export default function UserEdit({ userID, activeVisible, onCloseModal, onFinish
         onClose={ onCloseModal }
         visible={ activeVisible }
         bodyStyle={{ paddingBottom: 80 }}
-        extra={
-          <Space>
-            <Button onClick={(e) => {e.preventDefault();e.stopPropagation();onCloseModal()}}>关闭</Button>
-            <Button onClick={(e) => {e.preventDefault();e.stopPropagation();onFinishModal()}} type="primary">
-              提交
-            </Button>
-          </Space>
-        }
       >
         <Form 
           form={form}
@@ -53,49 +45,53 @@ export default function UserEdit({ userID, activeVisible, onCloseModal, onFinish
           initialValues={{ status: 2 }}
           validateTrigger={['onBlur','onChange']}
         >
-   
-              <Form.Item
-                name="user"
-                label="账&nbsp;&nbsp;&nbsp;&nbsp;号"
-                rules={[{ required: true, message: '请输入账号' }]}
-              >
-                <Input placeholder="输入账号" />
-              </Form.Item>
-       
-              <Form.Item
-                name="name"
-                label="昵&nbsp;&nbsp;&nbsp;&nbsp;称"
-                rules={[{ required: true, message: '请输入昵称' }]}
-              >
-                <Input placeholder="请输入昵称" />
-              </Form.Item>
-              <Form.Item
-                name="password"
-                label="密&nbsp;&nbsp;&nbsp;&nbsp;码"
-                rules={[{ required: true, message: '请输入密码' }]}
-              >
-                <Input.Password  placeholder="请输入密码" />
-              </Form.Item>
-              <Form.Item
-                label="所属组"
-                name="group_id"
-                rules={[{ required: true, message: '请选择所属组' }]}
-              >
-                <Select placeholder="请选择所属组">
-                  <Option value="1" key="1">所属组1</Option>
-                  <Option value="2" key="2">所属组2</Option>
-                </Select>
-              </Form.Item>
-              <Form.Item 
-                name="status"
-                label="是否禁用"
-              >
-                <Radio.Group>
-                  <Radio value={1}>禁用</Radio>
-                  <Radio value={2}>开启</Radio>
-                </Radio.Group>
-              </Form.Item>
-            
+          <Form.Item
+            name="user"
+            label="账&nbsp;&nbsp;&nbsp;&nbsp;号"
+            rules={[{ required: true, message: '请输入账号' }]}
+          >
+            <Input placeholder="输入账号" />
+          </Form.Item>
+    
+          <Form.Item
+            name="name"
+            label="昵&nbsp;&nbsp;&nbsp;&nbsp;称"
+            rules={[{ required: true, message: '请输入昵称' }]}
+          >
+            <Input placeholder="请输入昵称" />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            label="密&nbsp;&nbsp;&nbsp;&nbsp;码"
+            rules={[{ required: true, message: '请输入密码' }]}
+          >
+            <Input.Password  placeholder="请输入密码" />
+          </Form.Item>
+          <Form.Item
+            label="所属组"
+            name="group_id"
+            rules={[{ required: true, message: '请选择所属组' }]}
+          >
+            <Select placeholder="请选择所属组">
+              <Option value="1" key="1">所属组1</Option>
+              <Option value="2" key="2">所属组2</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item 
+            name="status"
+            label="是否禁用"
+          >
+            <Radio.Group>
+              <Radio value={1}>禁用</Radio>
+              <Radio value={2}>开启</Radio>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item>
+            <Button onClick={(e) => {e.preventDefault();e.stopPropagation();onCloseModal()}}>关闭</Button>
+            <Button type="primary" htmlType="submit" style={{ marginLeft:10 }}>
+              提交
+            </Button>
+          </Form.Item>
         </Form>
       </Drawer>
     </>
