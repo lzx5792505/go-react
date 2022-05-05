@@ -34,6 +34,7 @@ export default function UserEdit({ userID, activeVisible, onCloseModal, onFinish
         title={userID ? '编辑用户' : '新增用户'}
         width={720}
         closable={false}
+        getContainer={false}
         destroyOnClose={true}
         onClose={ onCloseModal }
         visible={ activeVisible }
