@@ -15,7 +15,7 @@ export default function Login () {
 
   const  onFinish = async val => {
     const { username, password, code } = val
-    // 所以表单选内容
+    // 表单数据
     try{
       await loginStore.getToken({
         username,
@@ -29,17 +29,21 @@ export default function Login () {
     }
   }
 
+  // 初始化验证码
   useEffect(() => {
     setCodeData('222222')
   },[])
   
+  // 重置验证码
   const onSearchCode = () => {
     setCodeData('123412')
   }
 
   return (
     <div className='login'>
+      {/* 背景离子效果 */}
       <canvas className="login-cav" width="100%" height="100%"></canvas>
+      {/* 表单 */}
       <Card className='login-container'>
         <div className="login-title">
             <span>管理员登录</span>
