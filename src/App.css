@@ -3,3 +3,13 @@
 .App {
   height: 100vh;
 }
+
+.purple{
+  background-color: #B500FE;
+  border: none;
+}
+
+.purple:hover{
+  background-color: #BF67F0;
+  border: none;
+}

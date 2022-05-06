@@ -6,6 +6,7 @@ import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { Table, Switch, Space,Row, Col, Card, Form, Button, Input, Popconfirm } from 'antd'
 
 import GroupEdit from './GroupEdit';
+import GroupRole from './GroupRole'
 
 function GroupList() {
   const navigate = useNavigate()
@@ -49,6 +50,13 @@ function GroupList() {
               shape="circle"
               icon={<EditOutlined />}
               onClick={ () => goPublish(data.id) }
+            />
+            <Button
+              shape="circle"
+              type="primary"
+              className="purple"
+              icon={<EditOutlined />}
+              onClick={ goGroupList }
             />
             <Popconfirm
               onConfirm={() => delData(data.id) }
@@ -124,6 +132,7 @@ function GroupList() {
     setGroupID(id)
     setVisible(true)
   }
+
   // 保存用户组
   const onFinishModal = value => {
     console.log(groupID);
@@ -135,6 +144,18 @@ function GroupList() {
     setGroupID('')
     setVisible(false)
   };
+
+  // 访问规则
+  const [ visibleGroup, setVisibleGroup ] =  useState(false)
+  const goGroupList = () => {
+    setVisibleGroup(true)
+  }
+  const onFinishGroup = value => {
+    setVisibleGroup(false)
+  }
+  const onCloseGroup = () => {
+    setVisibleGroup(false)
+  }
   
   return (
     <div>
@@ -182,8 +203,13 @@ function GroupList() {
     <GroupEdit
       groupID={ groupID }
       activeVisible={ visible }
-      onFinishModal={onFinishModal}
+      onFinishModal={ onFinishModal }
       onCloseModal={ onCloseModal }
+    />
+    <GroupRole 
+      activeVisible={ visibleGroup }
+      onFinishModal={ onFinishGroup }
+      onCloseModal={ onCloseGroup }
     />
   </div>
   )
