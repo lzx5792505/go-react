@@ -5,6 +5,8 @@ import useKeyPress from '../../hooks/useKeyPress';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { Table, Switch, Space,Row, Col, Card, Form, Button, Input } from 'antd'
 
+import GroupEdit from './GroupEdit';
+
 function GroupList() {
   const navigate = useNavigate()
   const [ form ] = Form.useForm()
@@ -84,14 +86,6 @@ function GroupList() {
     }
   },[ enterPressed ])
 
-  const showUserModal = () => {
-    navigate('/user/groupEdit')
-  }
-
-  const goPublish = id => {
-    navigate('/user/groupEdit?id=' + id)
-  }
-
   const onFinish = value => {
     const {search } = value
     const _params = {}
@@ -108,6 +102,31 @@ function GroupList() {
   const onSwitchChange = data => {
     console.log(data);
   }
+
+  // 抽屉式数据
+  const [ visible, setVisible ] =  useState(false)
+  const [ groupID, setGroupID ] =  useState('')
+  // 新增用户组
+  const showUserModal = () => {
+    setGroupID('')
+    setVisible(true)
+  }
+  // 编辑用户组
+  const goPublish = id => {
+    setGroupID(id)
+    setVisible(true)
+  }
+  // 保存用户组
+  const onFinishModal = value => {
+    console.log(groupID);
+    console.log(value);
+    setVisible(false)
+  }
+  // 关闭抽屉页面
+  const onCloseModal = () => {
+    setGroupID('')
+    setVisible(false)
+  };
   
   return (
     <div>
@@ -152,6 +171,12 @@ function GroupList() {
         bordered
       />
     </Card>
+    <GroupEdit
+      groupID={ groupID }
+      activeVisible={ visible }
+      onFinishModal={onFinishModal}
+      onCloseModal={ onCloseModal }
+    />
   </div>
   )
 }
