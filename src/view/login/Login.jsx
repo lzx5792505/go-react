@@ -14,11 +14,12 @@ export default function Login () {
   const [ codeData, setCodeData ] = useState('')
 
   const  onFinish = async val => {
-    const { mobile, code } = val
+    const { username, password, code } = val
     // 所以表单选内容
     try{
       await loginStore.getToken({
-        mobile,
+        username,
+        password,
         code
       })
       navigate('/',{replace:true})
