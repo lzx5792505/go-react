@@ -187,12 +187,12 @@ function SiteMenu() {
   };
 
   // 点击展开
-  const [expKeys, setExpKeys] = useState([]);
-  const onOpenMenu = () => {
-    siteMenu.list.map(item => {
-      console.log(item);
-    })
-  }
+  // const [expKeys, setExpKeys] = useState([]);
+  // const onOpenMenu = () => {
+  //   siteMenu.list.map(item => {
+  //     console.log(item);
+  //   })
+  // }
 
   return (
     <div>
@@ -211,7 +211,7 @@ function SiteMenu() {
                   添加节点
                 </Button>
               </Form.Item>
-              <Form.Item>
+              {/* <Form.Item>
                 <Button 
                   type="primary"
                   onClick={ onOpenMenu }
@@ -219,7 +219,7 @@ function SiteMenu() {
                 >
                   展开或折叠全部
                 </Button>
-              </Form.Item>
+              </Form.Item> */}
             </Row>
         </Form>
       </Card>
