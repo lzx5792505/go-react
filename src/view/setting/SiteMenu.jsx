@@ -186,6 +186,14 @@ function SiteMenu() {
     setVisible(false)
   };
 
+  // 点击展开
+  const [expKeys, setExpKeys] = useState([]);
+  const onOpenMenu = () => {
+    siteMenu.list.map(item => {
+      console.log(item);
+    })
+  }
+
   return (
     <div>
       <Card>
@@ -198,13 +206,17 @@ function SiteMenu() {
                   type="primary" 
                   danger  
                   style={{ marginTop:5}}
-                  onClick={showUserModal}
+                  onClick={ showUserModal }
                 >
                   添加节点
                 </Button>
               </Form.Item>
               <Form.Item>
-                <Button type="primary" htmlType="submit" style={{ marginLeft: 10,marginTop:5}}>
+                <Button 
+                  type="primary"
+                  onClick={ onOpenMenu }
+                  style={{ marginLeft: 10,marginTop:5}}
+                >
                   展开或折叠全部
                 </Button>
               </Form.Item>
@@ -224,7 +236,7 @@ function SiteMenu() {
     <SiteMenuEdit 
       menuID={ menuID }
       activeVisible={ visible }
-      onFinishModal={onFinishModal}
+      onFinishModal={ onFinishModal }
       onCloseModal={ onCloseModal }
     />
   </div>
