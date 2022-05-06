@@ -138,6 +138,7 @@ function RootLayout () {
         setActiveMenuID(activeMenuID)
     } else {
       setActiveMenuID(tabWithout[0]['url'])
+      navigate(tabWithout[0]['url'])
     }
   }
 
