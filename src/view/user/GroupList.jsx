@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useNavigate } from 'react-router-dom'
 import useKeyPress from '../../hooks/useKeyPress';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
-import { Table, Switch, Space,Row, Col, Card, Form, Button, Input } from 'antd'
+import { Table, Switch, Space,Row, Col, Card, Form, Button, Input, Popconfirm } from 'antd'
 
 import GroupEdit from './GroupEdit';
 
@@ -48,13 +48,21 @@ function GroupList() {
               type="primary"
               shape="circle"
               icon={<EditOutlined />}
-              onClick={ () => goPublish(data.id) }/>
-            <Button
-              type="primary"
-              danger
-              shape="circle"
-              icon={<DeleteOutlined />}
-              onClick={ () => delData(data.id) }/>
+              onClick={ () => goPublish(data.id) }
+            />
+            <Popconfirm
+              onConfirm={() => delData(data.id) }
+              title="是否确认删除？" 
+              okText="确认" 
+              cancelText="取消"
+            >
+              <Button
+                type="primary"
+                danger
+                shape="circle"
+                icon={<DeleteOutlined />}
+              />
+            </Popconfirm>
           </Space>
         )
       },

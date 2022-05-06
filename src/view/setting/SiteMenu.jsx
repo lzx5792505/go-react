@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Icon } from '@ant-design/icons'
-import { Table, Row, Card, Form, Button } from 'antd'
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { Table, Row, Card, Form, Button, Popconfirm, Space } from 'antd'
+
+import SiteMenuEdit from './SiteMenuEdit'
 
 function SiteMenu() {
   const [ siteMenu, setSiteMenu ] = useState({
     list:[],
-    expandedRowKeys:[]
   })
 
   // 列表字段
@@ -36,6 +37,36 @@ function SiteMenu() {
       dataIndex: 'last_login_ip',
       align:'center',
       defaultSortOrder:'descend'
+    },
+    {
+      title: '操作',
+      align:'center',
+      render: data => {
+        return (
+          <Space size="middle">
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<EditOutlined />}
+              onClick={ () => goPublish(data.id) }
+            />
+            <Popconfirm
+            onConfirm={() => delData(data.id) }
+              title="是否确认删除？" 
+              okText="确认" 
+              cancelText="取消"
+            >
+              <Button
+                type="primary"
+                danger
+                shape="circle"
+                icon={<DeleteOutlined />}
+              />
+            </Popconfirm>
+          </Space>
+        )
+      },
+      fixed: 'right'
     }
   ]
 
@@ -125,11 +156,36 @@ function SiteMenu() {
       ],
     })
   },[])
-  
-  const showMenuModal = () => {
+
+  const delData = id => {
 
   }
-  
+
+  // 抽屉式数据
+  const [ visible, setVisible ] =  useState(false)
+  const [ menuID, setMenuID ] =  useState('')
+  // 新增用户
+  const showUserModal = () => {
+    setMenuID('')
+    setVisible(true)
+  }
+  // 编辑用户
+  const goPublish = id => {
+    setMenuID(id)
+    setVisible(true)
+  }
+  // 保存用户
+  const onFinishModal = value => {
+    console.log(menuID);
+    console.log(value);
+    setVisible(false)
+  }
+  // 关闭抽屉页面
+  const onCloseModal = () => {
+    setMenuID('')
+    setVisible(false)
+  };
+
   return (
     <div>
       <Card>
@@ -142,7 +198,7 @@ function SiteMenu() {
                   type="primary" 
                   danger  
                   style={{ marginTop:5}}
-                  onClick={ (e) => {e.preventDefault();e.stopPropagation();showMenuModal()}}
+                  onClick={showUserModal}
                 >
                   添加节点
                 </Button>
@@ -165,6 +221,12 @@ function SiteMenu() {
         defaultExpandAllRows={true}
       />
     </Card>
+    <SiteMenuEdit 
+      menuID={ menuID }
+      activeVisible={ visible }
+      onFinishModal={onFinishModal}
+      onCloseModal={ onCloseModal }
+    />
   </div>
   )
 }
