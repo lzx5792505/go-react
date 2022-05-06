@@ -33,6 +33,7 @@ export default function SiteMenuEdit({ menuID, activeVisible, onCloseModal, onFi
       <Drawer
         title={menuID ? '编辑菜单' : '新增菜单'}
         width={720}
+        placement="left"
         closable={false}
         getContainer={false}
         destroyOnClose={true}

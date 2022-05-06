@@ -76,6 +76,7 @@ export default function GroupRole({ activeVisible, onCloseModal, onFinishModal }
       <Drawer
         title="访问规则"
         width={720}
+        placement="left"
         closable={false}
         getContainer={false}
         destroyOnClose={true}

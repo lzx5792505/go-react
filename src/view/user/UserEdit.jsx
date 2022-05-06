@@ -33,6 +33,7 @@ export default function UserEdit({ userID, activeVisible, onCloseModal, onFinish
       <Drawer
         title={userID ? '编辑用户' : '新增用户'}
         width={720}
+        placement="left"
         closable={false}
         getContainer={false}
         destroyOnClose={true}

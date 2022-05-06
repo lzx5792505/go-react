@@ -24,6 +24,7 @@ export default function GroupEdit({ groupID, activeVisible, onCloseModal, onFini
       <Drawer
         title={groupID ? '编辑用户组' : '新增用户组'}
         width={720}
+        placement="left"
         closable={false}
         getContainer={false}
         destroyOnClose={true}
