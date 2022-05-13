@@ -6,13 +6,6 @@ module.exports = {
         // 设置别名
         alias: {
             '@': path.resolve(__dirname, 'src')
-        },
-        plugins:[
-            new this.webpack.ProvidePlugin({
-                $:'jquery',
-                jQuery:'jquery',
-                "window.jQuery":'jquery'
-            })
-        ]
+        }
     }
 }

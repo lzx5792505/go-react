@@ -23,7 +23,7 @@ const defaultData = [
         id: '4',
         title: '用户管理',
         url: '/user',
-        icon: 'HomeOutlined',
+        icon: 'UserSwitchOutlined',
         children:[
             {
               id: '5',
