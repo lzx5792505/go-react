@@ -29,7 +29,7 @@ const defaultData = [
               id: '5',
               title: '用户列表',
               url: '/user/user',
-              icon: 'UserSwitchOutlined',
+              icon: 'UserOutlined',
             },
             {
               id: '6',
