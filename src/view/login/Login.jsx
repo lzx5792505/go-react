@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useStore as rootStore } from '@/store'
 import { useNavigate } from 'react-router-dom'
 import { Card, Form, Input, Button, message, Image, Col, Row } from 'antd'
@@ -9,18 +9,16 @@ import '@/assets/js/canvas.js'
 
 export default function Login () {
   const { loginStore } = rootStore()
-  const navigate = useNavigate()
-  const [value, setValue] = useState('')
   // 验证码
+  const [value, setValue] = useState('')
   const [ codeData, setCodeData ] = useState({
     code:'',
     id:'',
   })
+  const navigate = useNavigate()
 
   const  onFinish = async val => {
-    const code = value
-    console.log(code);
-    const { login_id,password } = val
+    const { login_id, password } = val
     // 表单数据
     try{
       await loginStore.getToken({
