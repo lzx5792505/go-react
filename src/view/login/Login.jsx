@@ -1,26 +1,33 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useStore as rootStore } from '@/store'
 import { useNavigate } from 'react-router-dom'
-import { Card, Form, Input, Button, message } from 'antd'
+import { Card, Form, Input, Button, message, Image, Col, Row } from 'antd'
+import { http } from '../../store/http'
 
 import '@/assets/scss/login.scss'
 import '@/assets/js/canvas.js'
 
 export default function Login () {
-  const { Search } =  Input
-  // 本地开发设置默认值
   const { loginStore } = rootStore()
   const navigate = useNavigate()
-  const [ codeData, setCodeData ] = useState('')
+  const [value, setValue] = useState('')
+  // 验证码
+  const [ codeData, setCodeData ] = useState({
+    code:'',
+    id:'',
+  })
 
   const  onFinish = async val => {
-    const { username, password, code } = val
+    const code = value
+    console.log(code);
+    const { login_id,password } = val
     // 表单数据
     try{
       await loginStore.getToken({
-        username,
-        password,
-        code
+        captcha_id : codeData.id,
+        captcha_answer : value,
+        login_id,
+        password
       })
       navigate('/',{replace:true})
       message.success('登录成功')
@@ -31,12 +38,28 @@ export default function Login () {
 
   // 初始化验证码
   useEffect(() => {
-    setCodeData('222222')
+    const loadCode = async () => {
+      const res =  await http.post('/auth/verify/code')
+      setCodeData({
+        code:res.captcha_image,
+        id:res.captcha_id
+      })
+    }
+    loadCode()
   },[])
   
+  // 获取填入的验证码
+  const onChangeCode = val => {
+    setValue(val.target.value)
+  }
+
   // 重置验证码
-  const onSearchCode = () => {
-    setCodeData('123412')
+  const onSearchCode = async () => {
+    const res = await http.post('/auth/verify/code')
+    setCodeData({
+      code:res.captcha_image,
+      id:res.captcha_id
+    })
   }
 
   return (
@@ -50,15 +73,14 @@ export default function Login () {
         </div>
         <Form
           initialValues={{
-            username:'admin',
+            login_id:'admin',
             password:'123123',
-            code:'222222'
           }}
           validateTrigger={['onBlur','onChange']}
           onFinish={ onFinish }
         >
           <Form.Item
-            name="username"
+            name="login_id"
             rules={[
               { 
                 required: true, 
@@ -79,27 +101,19 @@ export default function Login () {
           >
               <Input.Password size='large' placeholder='请输入密码' />
           </Form.Item>
-          <Form.Item
-            name="code"
-            rules={[
-              { 
-                required: true, 
-                message: '请输入验证码!' 
-              },
-              {
-                len:6,
-                message:'验证码6个字符',
-                validateTrigger:'onBlur'
-              }
-            ]}
-          >
-              <Search
-                placeholder="输入验证"
-                enterButton={ codeData }
-                size="large"
-                className="search-btn"
-                onSearch={ onSearchCode }
-              />
+          <Form.Item>
+            <Input.Group size="large">
+              <Row gutter={24} style={{ marginLeft: "0px",marginRight:"0px" }}>
+                <Col span={16} style={{ paddingLeft: "0px", paddingRight:"0px" }}>
+                  <Input value={ value } onChange={ onChangeCode } size='large' placeholder='输入验证码'/>
+                </Col>
+                <Col span={8} style={{ paddingLeft: "0px", paddingRight:"0px" }}>
+                  <Button onClick={(e) => {e.preventDefault();e.stopPropagation();onSearchCode()}} style={{ height: "40.14px",backgroundColor:"#fff" }}>
+                    <Image src={ codeData.code } />
+                  </Button>
+                </Col>
+              </Row>
+            </Input.Group>
           </Form.Item>
           <Form.Item>
               <Button type='primary' htmlType='submit' size='large' block>登录</Button>

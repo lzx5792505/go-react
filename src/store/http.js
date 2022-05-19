@@ -2,7 +2,7 @@ import axios from "axios"
 import { getStorage, tokenKey, history } from '@/utils'
 
 const http = axios.create({
-    baseURL: 'http://www.baidu.com',
+    baseURL: 'http://localhost:3000/api/v1',
     timeout: 5000
 })
 

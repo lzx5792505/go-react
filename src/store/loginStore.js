@@ -1,27 +1,32 @@
-// import { http } from './http'
+import { http } from './http'
 import { makeAutoObservable } from 'mobx'
 import { setStorage, getStorage, removeStorage, tokenKey } from '@/utils'
 
 export default class LoginStore{   
-    token = getStorage(tokenKey) ? getStorage(tokenKey) :''
+    token = getStorage(tokenKey) ? getStorage(tokenKey) : ''
     constructor() {
         makeAutoObservable(this)
     }
 
-    getToken = async ({ username, password, code }) => {
-        // const res = await http.post('/',{
-        //     username,
-        //     password,
-        //     code
-        // })
-        // this.token = res.data.token
-        // setStorage(tokenKey, res.data.token)
-
-        // 开发静态页面用例
-        this.token = '123123'
-        setStorage(tokenKey, this.token)
+    // 登录
+    getToken = async ({ captcha_id, captcha_answer, login_id,password }) => {
+        console.log(captcha_id, captcha_answer, login_id,password);
+        const res = await http.post('/auth/login',{
+            captcha_id,
+            captcha_answer,
+            login_id,
+            password
+        })
+        this.token = res.token
+        setStorage(tokenKey, res.token)
     }
 
+    // 验证码
+    getLoginCode = () => {
+        http.post('/auth/verify/code')
+    }
+
+    // 退出登录
     clearToken = () => {
         this.token = ''
         removeStorage(tokenKey)
