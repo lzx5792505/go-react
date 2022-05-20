@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import UserEdit from './UserEdit';
+import { http } from '../../store/http'
 import { observer } from 'mobx-react-lite'
 import { useNavigate } from 'react-router-dom'
 import useKeyPress from '../../hooks/useKeyPress';
@@ -8,15 +9,14 @@ import { Table, Switch, Space,Row, Col, Card, Form, Button, Input, Popconfirm } 
 
 function UserList() {
   const navigate = useNavigate()
-  const [ form ] = Form.useForm()
   const enterPressed = useKeyPress(13)
-  const [ userList, setUserList ] = useState({
-    list:[],
-    count:0
-  })
+
+  const [ form ] = Form.useForm()
+  const [ userList, setUserList ] = useState()
+  const [ pageCount, setPageCount ] = useState()
   const [paramies, setParamies] = useState({
-    page:1,
-    pre_page:10
+    page:'',
+    pre_page:''
   })
 
   // 列表字段
@@ -50,7 +50,7 @@ function UserList() {
     },
     {
       title: '最后登录时间',
-      dataIndex: 'last_login_time',
+      dataIndex: 'last_login_at',
       align:'center'
     },
     {
@@ -95,22 +95,19 @@ function UserList() {
     }
   ]
 
-  // 初始化获取数据
+
+  // 初始化数据
   useEffect(() => {
-    setUserList({
-      list:[
-        {
-          id:1,
-          user:'测试数据',
-          name:'测试名称',
-          title:'超级管理员',
-          login_count:1,
-          last_login_ip:'127.0.0.1',
-          last_login_time:'2022-04-28'
-        }
-      ],
-      count:1
-    })
+    const loadUser = async () => {
+      const res = await http.get('/users')
+      setUserList(res.data)
+      setPageCount(res.pager.TotalCount)
+      setParamies({
+        page:res.pager.CurrentPage,
+        pre_page:res.pager.PerPage
+      })
+    }
+    loadUser()
   },[])
 
   // 回车搜索
@@ -149,28 +146,32 @@ function UserList() {
   // 抽屉式数据
   const [ visible, setVisible ] =  useState(false)
   const [ userID, setUserID ] =  useState('')
+
   // 新增用户
   const showUserModal = () => {
     setUserID('')
     setVisible(true)
   }
+
   // 编辑用户
   const goPublish = id => {
     setUserID(id)
     setVisible(true)
   }
+
   // 保存用户
   const onFinishModal = value => {
     console.log(userID);
     console.log(value);
     setVisible(false)
   }
+
   // 关闭抽屉页面
   const onCloseModal = () => {
     setUserID('')
     setVisible(false)
   };
-  
+
   return (
     <div>
       <Card>
@@ -208,12 +209,12 @@ function UserList() {
     <Card>
       <Table
         rowKey="id"
-        columns={columns}
-        dataSource={userList.list}
+        columns={ columns }
+        dataSource={ userList }
         pagination={
           {
             pageSize: paramies.pre_page,
-            total: userList.count,
+            total: pageCount,
             onChange:pageChange,
             current: paramies.page
           }
