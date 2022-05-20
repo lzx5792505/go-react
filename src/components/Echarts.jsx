@@ -1,7 +1,7 @@
 import { useRef as Refs, useEffect as Effect } from 'react'
 import * as echarts from 'echarts'
 
-export default function Index ({ title,  xData, yData, style}) {
+export default function Index ({ title,  xData, yData, echStyle}) {
     const domRef = Refs()
 
     const chartsInit = () => {
@@ -32,7 +32,7 @@ export default function Index ({ title,  xData, yData, style}) {
 
     return (
         <>
-            <div ref={ domRef } className={ style }></div>
+            <div ref={ domRef } className={ echStyle }></div>
         </>
     )
 }

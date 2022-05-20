@@ -11,7 +11,7 @@ try{
 }else{
   $(function(){
     
-    var canvas = document.querySelector('canvas');
+    var canvas = document.querySelector('login-cav');
     
     if(canvas){
       var ctx = canvas.getContext('2d')

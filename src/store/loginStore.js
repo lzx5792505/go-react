@@ -10,7 +10,6 @@ export default class LoginStore{
 
     // 登录
     getToken = async ({ captcha_id, captcha_answer, login_id,password }) => {
-        console.log(captcha_id, captcha_answer, login_id,password);
         const res = await http.post('/auth/login',{
             captcha_id,
             captcha_answer,
@@ -19,6 +18,10 @@ export default class LoginStore{
         })
         this.token = res.token
         setStorage(tokenKey, res.token)
+
+        // 本地开发
+        // this.token = '11111'
+        // setStorage(tokenKey, this.token)
     }
 
     // 验证码
