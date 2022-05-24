@@ -2,7 +2,7 @@ import axios from "axios"
 import { getStorage, tokenKey, history } from '@/utils'
 
 const http = axios.create({
-    baseURL: 'http://localhost:3000/api/v1',
+    baseURL: 'http://localhost:3080/api/v1',
     timeout: 5000
 })
 
@@ -13,17 +13,18 @@ http.interceptors.request.use((config) => {
         config.headers.Authorization = 'Bearer ' + token;
     }
     return config
-}, (err) => {
+}, err => {
     return Promise.reject(err)
 })
 
-http.interceptors.response.use((res) => {
-    return res.data
-}, (err) => {
+http.interceptors.response.use(res => {
+    return res.data ? res.data : res;
+}, err => {
     if(err.response.status === 401 ){
         history.push('./login')
     }
-    return Promise.reject(err)
+    let msg = err.response.message ? err.response.message : err
+    return Promise.reject(msg)
 })
 
 export { http }

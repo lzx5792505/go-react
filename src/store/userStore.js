@@ -7,9 +7,14 @@ export default class UserStore {
         makeAutoObservable(this)
     }
 
-    getUserInfo = async () => {
-        const res = await  http.get('/')
-        this.userInfo =  res.data
+    // 用户列表
+    getUserList = async () => {
+        return await http.get('/users')
+    }
+
+    // 保存用户状态
+    saveStatus = async (data, id) => {
+       return await http.put('/users/status/' +  id, data)
     }
 }
 

@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import UserEdit from './UserEdit';
 import { http } from '../../store/http'
+import { useStore as rootStore } from '../../store'
 import { observer } from 'mobx-react-lite'
 import { useNavigate } from 'react-router-dom'
 import useKeyPress from '../../hooks/useKeyPress';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
-import { Table, Switch, Space,Row, Col, Card, Form, Button, Input, Popconfirm } from 'antd'
+import { Table, Switch, Space,Row, Col, Card, Form, Button, Input, Popconfirm, message } from 'antd'
 
 function UserList() {
   const navigate = useNavigate()
   const enterPressed = useKeyPress(13)
+  const { userStore } = rootStore()
 
   const [ form ] = Form.useForm()
-  const [ userList, setUserList ] = useState()
+  const [ userDList, setUserDList ] = useState()
   const [ pageCount, setPageCount ] = useState()
   const [paramies, setParamies] = useState({
     page:'',
@@ -55,13 +57,26 @@ function UserList() {
     },
     {
       title: '是否禁用',
-      dataIndex: 'status',
       align:'center',
-      render:title => (
-        <>
-          <Switch checkedChildren="开启" unCheckedChildren="禁用" onChange={onSwitchChange} />
-        </>
-      ),
+      render: data => {
+        return (
+          <>
+            {
+              data.user !== 'admin' && 
+              <>
+                {
+                  data.status === 1 && 
+                  <Switch checked="1" checkedChildren="开启" unCheckedChildren="禁用" onChange={(checked) => onSwitchChange(checked, data.id)} />
+                }
+                {
+                  data.status === 2 && 
+                  <Switch checkedChildren="开启" unCheckedChildren="禁用" onChange={(checked) => onSwitchChange(checked, data.id)} />
+                }
+              </>
+            }
+          </>
+        )
+      },
     },
     {
       title: '操作',
@@ -95,16 +110,11 @@ function UserList() {
     }
   ]
 
-
   // 初始化数据
   useEffect(() => {
     const loadUser = async () => {
-      const res = await http.get('/users')
-      setUserList(res.data)
-      setPageCount(res.pager.TotalCount)
-      setParamies({
-        page:res.pager.CurrentPage,
-        pre_page:res.pager.PerPage
+      await http.get('/users').then(res => {
+        dataList(res)
       })
     }
     loadUser()
@@ -139,8 +149,20 @@ function UserList() {
   }
 
   // 是否禁用
-  const onSwitchChange = data => {
-    console.log(data);
+  const onSwitchChange = (status, id) => {
+    console.log(status, id);
+    const _params = {}
+    if(status === true){
+      _params.status = 1
+    }else{
+      _params.status = 2
+    }
+    userStore.saveStatus(_params, id).then(res => {
+      if(res.code === 200){
+        userDataList()
+        message.success('修改状态成功')
+      }
+    })
   }
 
   // 抽屉式数据
@@ -172,6 +194,23 @@ function UserList() {
     setVisible(false)
   };
 
+  // 列表数据
+  const userDataList = () => {
+    userStore.getUserList().then(res => {
+      dataList(res)
+    })
+  }
+
+  // 列表数据 -- 公共方法
+  const dataList = ( res ) => {
+    setUserDList(res.data)
+    setPageCount(res.pager.TotalCount)
+    setParamies({ 
+      page:res.pager.CurrentPage, 
+      pre_page:res.pager.PerPage 
+    })
+  }
+
   return (
     <div>
       <Card>
@@ -179,7 +218,6 @@ function UserList() {
           layout="horizontal"
           onFinish={ onSearch }
           initialValues={{ status: -1 }}
-          form={ form }
         >
             <Row gutter={24}>
               <Col span={3} key="1">
@@ -210,7 +248,7 @@ function UserList() {
       <Table
         rowKey="id"
         columns={ columns }
-        dataSource={ userList }
+        dataSource={ userDList }
         pagination={
           {
             pageSize: paramies.pre_page,
