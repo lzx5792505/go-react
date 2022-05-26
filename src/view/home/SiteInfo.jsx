@@ -30,11 +30,13 @@ function SiteInfo() {
 
   // 初始化数据
   useEffect(() => {
-    const loadSeeting = async () => {
-      const res = await http.get('/seeting')
-      setData([ res.data ])
+    const timeout = setTimeout(() => loadSeeting(), 100)
+    return () => clearTimeout(timeout)
+    async function loadSeeting() {
+      await await http.get('/seeting').then(res => {
+        setData([ res.data ])
+      })
     }
-    loadSeeting()
   },[])
 
   return (

@@ -36,16 +36,18 @@ export default function Login () {
 
   // 初始化验证码
   useEffect(() => {
-    const loadCode = async () => {
-      const res =  await http.post('/auth/verify/code')
-      setCodeData({
-        code:res.captcha_image,
-        id:res.captcha_id
+    const timeout = setTimeout(() => loadCode(), 100)
+    return () => clearTimeout(timeout)
+    async function loadCode() {
+      await http.post('/auth/verify/code').then(res => {
+        setCodeData({
+          code:res.captcha_image,
+          id:res.captcha_id
+        })
       })
     }
-    loadCode()
   },[])
-  
+
   // 获取填入的验证码
   const onChangeCode = val => {
     setValue(val.target.value)
@@ -63,7 +65,7 @@ export default function Login () {
   return (
     <div className='login'>
       {/* 背景离子效果 */}
-      <canvas className="login-cav" width="100%" height="100%"></canvas>
+      <canvas id="log-cav" className="login-cav" width="100%" height="100%"></canvas>
       {/* 表单 */}
       <Card className='login-container'>
         <div className="login-title">

@@ -1,23 +1,24 @@
 import React, { useEffect } from 'react'
+import { http } from '../../store/http'
 import { Drawer, Form, Button, Input, Radio, Select } from 'antd';
 
 export default function UserEdit({ userID, activeVisible, onCloseModal, onFinishModal }) {
   const { Option } = Select
   const [form] = Form.useForm()
-
-  // 数据回填
+  
   useEffect(() => {
+    const loadDetail = async () => {
+      const res = await http.get(`/users/one/${userID}`)
+      const data = res.data
+      // 表单数据回填
+      form.setFieldsValue({ 
+        ...data, 
+      })
+    }
+    // 编辑状态才能发送
     if(userID){
-      form.setFieldsValue(
-        {
-          user:'测试数据',
-          name:'测试名称',
-          password:'123456',
-          group_id:'1',
-          status:2,
-        }
-      )
-    }else {
+      loadDetail()
+    } else {
       form.setFieldsValue({
         user:'',
         name:'',
@@ -43,7 +44,7 @@ export default function UserEdit({ userID, activeVisible, onCloseModal, onFinish
       >
         <Form 
           form={form}
-          onFinish={onFinishModal}
+          onFinish={ onFinishModal }
           initialValues={{ status: 2 }}
           validateTrigger={['onBlur','onChange']}
         >
@@ -62,13 +63,16 @@ export default function UserEdit({ userID, activeVisible, onCloseModal, onFinish
           >
             <Input placeholder="请输入昵称" />
           </Form.Item>
-          <Form.Item
-            name="password"
-            label="密&nbsp;&nbsp;&nbsp;&nbsp;码"
-            rules={[{ required: true, message: '请输入密码' }]}
-          >
-            <Input.Password  placeholder="请输入密码" />
-          </Form.Item>
+          {
+            !userID &&
+            <Form.Item
+              name="password"
+              label="密&nbsp;&nbsp;&nbsp;&nbsp;码"
+              rules={[{ required: true, message: '请输入密码' }]}
+            >
+              <Input.Password  placeholder="请输入密码" />
+            </Form.Item>
+          }
           <Form.Item
             label="所属组"
             name="group_id"
@@ -84,8 +88,8 @@ export default function UserEdit({ userID, activeVisible, onCloseModal, onFinish
             label="是否禁用"
           >
             <Radio.Group>
-              <Radio value={1}>禁用</Radio>
-              <Radio value={2}>开启</Radio>
+              <Radio value={1}>开启</Radio>
+              <Radio value={2}>禁用</Radio>
             </Radio.Group>
           </Form.Item>
           <Form.Item>

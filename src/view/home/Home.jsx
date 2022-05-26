@@ -13,18 +13,20 @@ export default function Index () {
 
   // 初始化数据 （测试案例）已实际开发为主！
   useEffect(() => {
-    const loadChart = async () => {
-      const res = await http.get('/seeting/chart')
-      const { data, code } = res
-      if(code === 200){
-        setEchar({
-          title: data.Title,
-          xData:data.XData,
-          yData:data.YData
-        })
-      }
+    const timeout = setTimeout(() => loadChart(), 100)
+    return () => clearTimeout(timeout)
+    async function loadChart() {
+      await http.get('/seeting/chart').then(res => {
+        const { data, code } = res
+        if(code === 200){
+          setEchar({
+            title: data.Title,
+            xData:data.XData,
+            yData:data.YData
+          })
+        }
+      })
     }
-    loadChart()
   },[])
 
   return (

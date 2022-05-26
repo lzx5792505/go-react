@@ -1,24 +1,22 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import UserEdit from './UserEdit';
 import { http } from '../../store/http'
 import { useStore as rootStore } from '../../store'
 import { observer } from 'mobx-react-lite'
-import { useNavigate } from 'react-router-dom'
 import useKeyPress from '../../hooks/useKeyPress';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { Table, Switch, Space,Row, Col, Card, Form, Button, Input, Popconfirm, message } from 'antd'
 
 function UserList() {
-  const navigate = useNavigate()
   const enterPressed = useKeyPress(13)
   const { userStore } = rootStore()
 
   const [ form ] = Form.useForm()
   const [ userDList, setUserDList ] = useState()
   const [ pageCount, setPageCount ] = useState()
-  const [paramies, setParamies] = useState({
-    page:'',
-    pre_page:''
+  const [ paramies, setParamies ] = useState({
+    page:1,
+    per_page:10
   })
 
   // 列表字段
@@ -112,12 +110,13 @@ function UserList() {
 
   // 初始化数据
   useEffect(() => {
-    const loadUser = async () => {
+    const timeout = setTimeout(() => loadList(), 100)
+    return () => clearTimeout(timeout)
+    async function loadList() {
       await http.get('/users').then(res => {
-        dataList(res)
+        dataList(res) 
       })
     }
-    loadUser()
   },[])
 
   // 回车搜索
@@ -130,7 +129,7 @@ function UserList() {
 
   // 提交搜索
   const onSearch = value => {
-    const {search } = value
+    const { search } = value
     const _params = {}
     if(search !== -1){
       _params.search = search
@@ -140,27 +139,25 @@ function UserList() {
 
   // 删除数据
   const delData = id => {
-    navigate('/user/delete?id=' + id)
-  }
-
-  // 点击分页
-  const pageChange = () => {
-
+    userStore.delUser().then(res => {
+      if(res.code === 200){
+        message.success('删除成功')
+      }
+    })
   }
 
   // 是否禁用
   const onSwitchChange = (status, id) => {
-    console.log(status, id);
     const _params = {}
     if(status === true){
       _params.status = 1
     }else{
       _params.status = 2
     }
-    userStore.saveStatus(_params, id).then(res => {
+    setParamies({ ...paramies, ..._params })
+    userStore.saveStatus(id, _params).then(res => {
       if(res.code === 200){
-        userDataList()
-        message.success('修改状态成功')
+        message.success('修改成功')
       }
     })
   }
@@ -168,7 +165,6 @@ function UserList() {
   // 抽屉式数据
   const [ visible, setVisible ] =  useState(false)
   const [ userID, setUserID ] =  useState('')
-
   // 新增用户
   const showUserModal = () => {
     setUserID('')
@@ -182,10 +178,22 @@ function UserList() {
   }
 
   // 保存用户
-  const onFinishModal = value => {
-    console.log(userID);
-    console.log(value);
+   const onFinishModal =  value => {
+    const { user, name, password, group_id,status } = value
+    const params = {
+      user, 
+      name, 
+      password, 
+      group_id: parseInt(group_id),
+      status,
+    }
+    if(userID){
+      userStore.updateUser(userID, params)
+    } else {
+      userStore.saveUser(params)
+    }
     setVisible(false)
+    message.success(`${userID ? '更新成功' : '添加成功'}`)
   }
 
   // 关闭抽屉页面
@@ -195,19 +203,13 @@ function UserList() {
   };
 
   // 列表数据
-  const userDataList = () => {
-    userStore.getUserList().then(res => {
-      dataList(res)
-    })
-  }
-
-  // 列表数据 -- 公共方法
   const dataList = ( res ) => {
-    setUserDList(res.data)
-    setPageCount(res.pager.TotalCount)
+    const { data, pager } = res
+    setUserDList(data)
+    setPageCount(pager.TotalCount)
     setParamies({ 
-      page:res.pager.CurrentPage, 
-      pre_page:res.pager.PerPage 
+      page:pager.CurrentPage, 
+      per_page:pager.PerPage 
     })
   }
 
@@ -218,6 +220,7 @@ function UserList() {
           layout="horizontal"
           onFinish={ onSearch }
           initialValues={{ status: -1 }}
+          form={form}
         >
             <Row gutter={24}>
               <Col span={3} key="1">
@@ -251,9 +254,8 @@ function UserList() {
         dataSource={ userDList }
         pagination={
           {
-            pageSize: paramies.pre_page,
+            pageSize: paramies.per_page,
             total: pageCount,
-            onChange:pageChange,
             current: paramies.page
           }
         }
