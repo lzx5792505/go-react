@@ -6,9 +6,9 @@ export default class UserStore {
         makeAutoObservable(this)
     }
 
-    // 用户列表 & 搜索
-    getUserList = async () => {
-        return await http.get('/users')
+    // 搜索
+    getUserList = async data => {
+        return await http.get('/users?page=' + data.page + '&per_page=' + data.per_page + '&search=' + data.search)
     }
 
     // 保存用户

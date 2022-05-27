@@ -1,22 +1,27 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import UserEdit from './UserEdit';
 import { http } from '../../store/http'
-import { useStore as rootStore } from '../../store'
 import { observer } from 'mobx-react-lite'
 import useKeyPress from '../../hooks/useKeyPress';
+import { useStore as rootStore } from '../../store'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { Table, Switch, Space,Row, Col, Card, Form, Button, Input, Popconfirm, message } from 'antd'
 
 function UserList() {
+  // 回车按键
   const enterPressed = useKeyPress(13)
+  // mobx 用户方法
   const { userStore } = rootStore()
-
-  const [ form ] = Form.useForm()
-  const [ userDList, setUserDList ] = useState()
-  const [ pageCount, setPageCount ] = useState()
+  // 搜索字段
+  const [ inputValue, setInputValue ] = useState('')
+  // 用户列表
+  const [ userDList, setUserDList ] = useState('')
+  // 总数量
+  const [ pageCount, setPageCount ] = useState('')
+  // 请求参数
   const [ paramies, setParamies ] = useState({
     page:1,
-    per_page:10
+    pre_page:10,
   })
 
   // 列表字段
@@ -108,10 +113,11 @@ function UserList() {
     }
   ]
 
-  // 初始化数据
+  // 初始化数据 ( 处理发送2次的情况 )
   useEffect(() => {
     const timeout = setTimeout(() => loadList(), 100)
     return () => clearTimeout(timeout)
+
     async function loadList() {
       await http.get('/users').then(res => {
         dataList(res) 
@@ -119,52 +125,48 @@ function UserList() {
     }
   },[])
 
-  // 回车搜索
+  // 回车搜索 ( 处理发送2次的情况 )
   useEffect(() => {
-    const search = form.getFieldValue('search')
-    if(enterPressed && search.length > 0){
-      onSearch(search)
+    const timeout = setTimeout(() => searchList(), 100)
+    return () => clearTimeout(timeout)
+
+    async function searchList() {
+      if(enterPressed && inputValue){
+        userDataList()
+      }
     }
   },[ enterPressed ])
 
   // 提交搜索
-  const onSearch = value => {
-    const { search } = value
-    const _params = {}
-    if(search !== -1){
-      _params.search = search
-    }
-    setParamies({ ...paramies, ..._params })
-  }
-
-  // 删除数据
-  const delData = id => {
-    userStore.delUser().then(res => {
-      if(res.code === 200){
-        message.success('删除成功')
-      }
-    })
+  const onSearch = () => {
+    userDataList()
   }
 
   // 是否禁用
   const onSwitchChange = (status, id) => {
-    const _params = {}
+    const values = {}
     if(status === true){
-      _params.status = 1
+      values.status = 1
     }else{
-      _params.status = 2
+      values.status = 2
     }
-    setParamies({ ...paramies, ..._params })
-    userStore.saveStatus(id, _params).then(res => {
-      if(res.code === 200){
-        message.success('修改成功')
-      }
+
+    userStore.saveStatus(id, values).then(res => {
+      userDataList(res, '修改用户状态成功')
+    })
+  }
+
+  // 删除数据
+  const delData = id => {
+    userStore.delUser(id).then(res => {
+      userDataList(res, '删除用户成功')
     })
   }
 
   // 抽屉式数据
   const [ visible, setVisible ] =  useState(false)
   const [ userID, setUserID ] =  useState('')
+
   // 新增用户
   const showUserModal = () => {
     setUserID('')
@@ -188,12 +190,15 @@ function UserList() {
       status,
     }
     if(userID){
-      userStore.updateUser(userID, params)
+      userStore.updateUser(userID, params).then(res => {
+        userDataList(res, '更新用户成功')
+      })
     } else {
-      userStore.saveUser(params)
+      userStore.saveUser(params).then(res => {
+        userDataList(res, '添加用户成功')
+      })
     }
     setVisible(false)
-    message.success(`${userID ? '更新成功' : '添加成功'}`)
   }
 
   // 关闭抽屉页面
@@ -202,9 +207,26 @@ function UserList() {
     setVisible(false)
   };
 
+  // 数据列表
+  const userDataList = (res, msg) => {
+    console.log(paramies);
+    const data = {
+      page : paramies.page,
+      per_page : paramies.per_page,
+      search : inputValue
+    }
+    if(res && (res.code === 200 || res.code === 201)){
+      message.success(msg ?? res.message)
+    }
+    userStore.getUserList(data).then(res => {
+      dataList(res)
+    })
+  }
+
   // 列表数据
   const dataList = ( res ) => {
     const { data, pager } = res
+
     setUserDList(data)
     setPageCount(pager.TotalCount)
     setParamies({ 
@@ -219,13 +241,11 @@ function UserList() {
         <Form
           layout="horizontal"
           onFinish={ onSearch }
-          initialValues={{ status: -1 }}
-          form={form}
         >
             <Row gutter={24}>
-              <Col span={3} key="1">
-                <Form.Item name="search">
-                    <Input size='large' placeholder='请输账号 或者 昵称' />
+              <Col span={6} key="1">
+                <Form.Item name="search_name">
+                    <Input onChange={(e) => { setInputValue(e.target.value) }} size='large' placeholder='请输账号 或者 昵称' />
                 </Form.Item>
               </Col>
               <Form.Item>

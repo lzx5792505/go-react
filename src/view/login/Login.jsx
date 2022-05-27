@@ -108,9 +108,12 @@ export default function Login () {
                   <Input value={ value } onChange={ onChangeCode } size='large' placeholder='输入验证码'/>
                 </Col>
                 <Col span={8} style={{ paddingLeft: "0px", paddingRight:"0px" }}>
-                  <Button onClick={(e) => {e.preventDefault();e.stopPropagation();onSearchCode()}} style={{ height: "40.14px",backgroundColor:"#fff" }}>
-                    <Image src={ codeData.code } />
-                  </Button>
+                  <div onClick={(e) => {e.preventDefault();e.stopPropagation();onSearchCode()}} style={{ height: "40.14px",backgroundColor:"#fff" }}>
+                    <Image 
+                      src={ codeData.code }
+                      preview={ false }
+                    />
+                  </div>
                 </Col>
               </Row>
             </Input.Group>
