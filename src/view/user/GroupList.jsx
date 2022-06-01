@@ -1,43 +1,56 @@
 import React, { useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { useNavigate } from 'react-router-dom'
 import useKeyPress from '../../hooks/useKeyPress';
+import { useStore as rootStore } from '../../store'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
-import { Table, Switch, Space,Row, Col, Card, Form, Button, Input, Popconfirm } from 'antd'
+import { Table, Switch, Space,Row, Col, Card, Form, Button, Input, Popconfirm, message } from 'antd'
 
+import { http } from '../../store/http'
 import GroupEdit from './GroupEdit';
 import GroupRole from './GroupRole'
 
 function GroupList() {
-  const navigate = useNavigate()
-  const [ form ] = Form.useForm()
+  // mobx 用户方法
+  const { groupStore } = rootStore()
   const enterPressed = useKeyPress(13)
-  const [ paramies, setParamies ] = useState([])
-  const [ groupList, setGroupList ] = useState({
-    list:[],
-    count:0
-  })
+  // 列表
+  const [ groupList, setGroupList ] = useState('')
+  // 搜索字段
+  const [ searchValue, setSearchValue ] = useState('')
   // 列表字段
   const columns = [
     {
       title: '组名',
-      dataIndex: 'user',
+      dataIndex: 'title',
       align:'center'
     },
     {
       title: '规则ID',
-      dataIndex: 'name',
+      dataIndex: 'rules',
       align:'center'
     },
     {
       title: '是否禁用',
-      dataIndex: 'status',
       align:'center',
-      render:title => (
-        <>
-          <Switch checkedChildren="开启" unCheckedChildren="禁用" onChange={onSwitchChange} />
-        </>
-      ),
+      render: data => {
+        return (
+          <>
+            {
+              data.title !== '超级管理员组' && 
+              <>
+                {
+                  data.status === 1 && 
+                  <Switch checked="1" checkedChildren="开启" unCheckedChildren="禁用" onChange={(checked) => onSwitchChange(checked, data.id)} />
+                }
+                {
+                  data.status === 2 && 
+                  <Switch checkedChildren="开启" unCheckedChildren="禁用" onChange={(checked) => onSwitchChange(checked, data.id)} />
+                }
+              </>
+            }
+          </>
+        )
+      },
     },
     {
       title: '操作',
@@ -78,41 +91,37 @@ function GroupList() {
     }
   ]
 
+  // 初始化数据 ( 处理发送2次的情况 )
   useEffect(() => {
-    setGroupList({
-      list:[
-        {
-          id:1,
-          user:'测试数据',
-          name:'测试名称',
-          title:'超级管理员',
-          login_count:1,
-          last_login_ip:'127.0.0.1',
-          last_login_time:'2022-04-28'
-        }
-      ],
-      count:1
-    })
+    const timeout = setTimeout(() => loadList(), 100)
+    return () => clearTimeout(timeout)
+
+    async function loadList() {
+      await http.get('/group').then(res => {
+        dataList(res) 
+      })
+    }
   },[])
 
+  // 回车搜索 ( 处理发送2次的情况 )
   useEffect(() => {
-    const search = form.getFieldValue('search')
-    if(enterPressed && search.length > 0){
-      onFinish(search)
+    const timeout = setTimeout(() => searchList(), 100)
+    return () => clearTimeout(timeout)
+
+    async function searchList() {
+      if(enterPressed && searchValue){
+        await groupDataList()
+      }
     }
   },[ enterPressed ])
 
-  const onFinish = value => {
-    const {search } = value
-    const _params = {}
-    if(search !== -1){
-      _params.search = search
-    }
-    setParamies({ ...paramies, ..._params })
+  // 提交搜索
+  const onSearch = () => {
+    groupDataList()
   }
 
   const delData = id => {
-    navigate('/user/groupDelete?id=' + id)
+    
   }
 
   const onSwitchChange = data => {
@@ -156,20 +165,38 @@ function GroupList() {
   const onCloseGroup = () => {
     setVisibleGroup(false)
   }
+
+
+  // 数据列表
+  const groupDataList = (res, msg) => {
+    const data = {
+      search : searchValue
+    }
+    if(res && (res.code === 200 || res.code === 201)){
+      message.success(msg ?? res.message)
+    }
+    groupStore.getGroupList(data).then(res => {
+      dataList(res)
+    })
+  }
+
+  // 列表数据
+  const dataList = ( res ) => {
+    const { data } = res
+    setGroupList(data)
+  }
   
   return (
     <div>
       <Card>
         <Form
           layout="horizontal"
-          onFinish={ onFinish }
-          initialValues={{ status: -1 }}
-          form={ form }
+          onFinish={ onSearch }
         >
             <Row gutter={24}>
-              <Col span={3} key="1">
+              <Col span={6} key="1">
                 <Form.Item name="search">
-                    <Input size='large' placeholder='请输账号 或者 昵称' />
+                    <Input onChange={(e) => { setSearchValue(e.target.value) }} size='large' placeholder='请输账号 或者 昵称' />
                 </Form.Item>
               </Col>
               <Form.Item>
@@ -194,9 +221,9 @@ function GroupList() {
     <Card>
       <Table
         rowKey="id"
-        columns={columns}
-        dataSource={groupList.list}
-        pagination={false}
+        columns={ columns }
+        dataSource={ groupList }
+        pagination={ false }
         bordered
       />
     </Card>

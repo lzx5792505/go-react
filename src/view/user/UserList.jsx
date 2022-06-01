@@ -132,7 +132,7 @@ function UserList() {
 
     async function searchList() {
       if(enterPressed && inputValue){
-        userDataList()
+        await userDataList()
       }
     }
   },[ enterPressed ])
@@ -209,7 +209,6 @@ function UserList() {
 
   // 数据列表
   const userDataList = (res, msg) => {
-    console.log(paramies);
     const data = {
       page : paramies.page,
       per_page : paramies.per_page,
