@@ -69,7 +69,7 @@ function GroupList() {
               type="primary"
               className="purple"
               icon={<EditOutlined />}
-              onClick={ goGroupList }
+              onClick={ () => goGroupList(data.id) }
             />
             <Popconfirm
               onConfirm={() => delData(data.id) }
@@ -180,12 +180,19 @@ function GroupList() {
 
   // 访问规则
   const [ visibleGroup, setVisibleGroup ] =  useState(false)
-  const goGroupList = () => {
+  const goGroupList = value => {
+    setGroupID(value)
     setVisibleGroup(true)
   }
   // 保存访问规则
   const onFinishGroup = value => {
-    console.log(value);
+    const _params = {}
+    if(value) {
+      _params.rules = value
+    }
+    groupStore.saveRule(groupID, _params).then(res => {
+      groupDataList(res, '添加访问规则成功')
+    })
     setVisibleGroup(false)
   }
   const onCloseGroup = () => {

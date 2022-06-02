@@ -1,7 +1,9 @@
-import React from 'react'
-import { Drawer, Form, Button, Table } from 'antd';
+import React, { useState } from 'react'
+import { Drawer, Button, Table } from 'antd';
 
 export default function GroupRole({ activeVisible, onCloseModal, onFinishModal }) {
+
+  const [ selectedRowKeys, setSelectedRowKeys ] = useState('')
   const columns = [
     {
       title: '规则名称',
@@ -13,37 +15,37 @@ export default function GroupRole({ activeVisible, onCloseModal, onFinishModal }
   const data = [
     {
       key: 1,
-      name: 'John Brown sr.',
+      name: '111',
       children: [
         {
           key: 11,
-          name: 'John Brown',
+          name: '222',
         },
         {
           key: 12,
-          name: 'John Brown jr.',
+          name: '333',
           children: [
             {
               key: 121,
-              name: 'Jimmy Brown',
+              name: '444',
             },
           ],
         },
         {
           key: 13,
-          name: 'Jim Green sr.',
+          name: '555',
           children: [
             {
               key: 131,
-              name: 'Jim Green',
+              name: '666',
               children: [
                 {
                   key: 1311,
-                  name: 'Jim Green jr.',
+                  name: '777',
                 },
                 {
                   key: 1312,
-                  name: 'Jimmy Green sr.',
+                  name: '888',
                 },
               ],
             },
@@ -53,21 +55,15 @@ export default function GroupRole({ activeVisible, onCloseModal, onFinishModal }
     },
     {
       key: 2,
-      name: 'Joe Black',
+      name: '999',
       age: 32,
-      address: 'Sidney No. 1 Lake Park',
+      address: '101010',
     },
   ];
 
   const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    },
-    onSelect: (record, selected, selectedRows) => {
-      console.log(record, selected, selectedRows);
-    },
-    onSelectAll: (selected, selectedRows, changeRows) => {
-      console.log(selected, selectedRows, changeRows);
+    onChange: (selectedRowKeys) => {
+      setSelectedRowKeys(`${selectedRowKeys}`)
     },
   };
 
@@ -91,7 +87,7 @@ export default function GroupRole({ activeVisible, onCloseModal, onFinishModal }
             dataSource={data}
           />
           <Button onClick={(e) => {e.preventDefault();e.stopPropagation();onCloseModal()}}>关闭</Button>
-          <Button type="primary" onClick={(e) => {e.preventDefault();e.stopPropagation();onFinishModal()}} style={{ marginLeft:10 }}>
+          <Button type="primary" onClick={(e) => {e.preventDefault();e.stopPropagation();onFinishModal( selectedRowKeys )}} style={{ marginLeft:10 }}>
             提交
           </Button>
       </Drawer>

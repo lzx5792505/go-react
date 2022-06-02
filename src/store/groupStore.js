@@ -16,10 +16,15 @@ export default class GroupStore {
         return await http.post('/group/store', data)
     }
 
+    // 保存访问规则
+    saveRule = async (id, data) => {
+        return await http.post(`/group/store/rule/${id}`, data)
+    }
+
     // 更新用户组状态
     saveStatus = async (id, data) => {
         return await http.put(`/group/status/${id}`, data)
-     }
+    }
 
     // 更新
     updateGroup = async (id, data) => {
