@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { http } from '../../store/http'
 import { Drawer, Form, Button, Input } from 'antd';
 
 export default function GroupEdit({ groupID, activeVisible, onCloseModal, onFinishModal }) {
@@ -6,13 +7,18 @@ export default function GroupEdit({ groupID, activeVisible, onCloseModal, onFini
 
   // 数据回填
   useEffect(() => {
+    const loadDetail = async () => {
+      const res = await http.get(`/group/one/${groupID}`)
+      const data = res.data
+      // 表单数据回填
+      form.setFieldsValue({ 
+        ...data, 
+      })
+    }
+    // 编辑状态才能发送
     if(groupID){
-      form.setFieldsValue(
-        {
-          title:'测试名称',
-        }
-      )
-    }else {
+      loadDetail()
+    } else {
       form.setFieldsValue({
         title:'',
       })
@@ -33,8 +39,8 @@ export default function GroupEdit({ groupID, activeVisible, onCloseModal, onFini
         bodyStyle={{ paddingBottom: 80 }}
       >
         <Form 
-          form={form}
-          onFinish={onFinishModal}
+          form={ form }
+          onFinish={ onFinishModal }
           initialValues={{ status: 2 }}
           validateTrigger={['onBlur','onChange']}
         >

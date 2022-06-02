@@ -120,12 +120,25 @@ function GroupList() {
     groupDataList()
   }
 
-  const delData = id => {
-    
+  // 修改用户组状态
+  const onSwitchChange = (status, id) => {
+    const _params = {}
+    if(status === true){
+      _params.status = 1
+    } else {
+      _params.status = 2
+    }
+
+    groupStore.saveStatus(id, _params).then(res => {
+      groupDataList(res, '修改用户组状态成功')
+    })
   }
 
-  const onSwitchChange = data => {
-    console.log(data);
+  // 删除
+  const delData = id => {
+    groupStore.delGroup(id).then(res => {
+      groupDataList(res, '删除用户组成功')
+    })
   }
 
   // 抽屉式数据
@@ -144,8 +157,19 @@ function GroupList() {
 
   // 保存用户组
   const onFinishModal = value => {
-    console.log(groupID);
-    console.log(value);
+    const { title } = value
+    const params = {
+      title, 
+    }
+    if(groupID){
+      groupStore.updateGroup(groupID, params).then(res => {
+        groupDataList(res, '更新用户组成功')
+      })
+    } else {
+      groupStore.saveGroup(params).then(res => {
+        groupDataList(res, '添加用户组成功')
+      })
+    }
     setVisible(false)
   }
   // 关闭抽屉页面
@@ -159,13 +183,14 @@ function GroupList() {
   const goGroupList = () => {
     setVisibleGroup(true)
   }
+  // 保存访问规则
   const onFinishGroup = value => {
+    console.log(value);
     setVisibleGroup(false)
   }
   const onCloseGroup = () => {
     setVisibleGroup(false)
   }
-
 
   // 数据列表
   const groupDataList = (res, msg) => {
