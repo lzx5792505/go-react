@@ -1,9 +1,28 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Drawer, Button, Table } from 'antd';
+import { useStore as rootStore } from '../../store'
+import  createTreeData  from '../../utils/helper'
 
 export default function GroupRole({ activeVisible, onCloseModal, onFinishModal }) {
-
+  // mobx 用户方法
+  const { menuStore } = rootStore()
+  const [ dataList, setDataList ] =  useState({})
   const [ selectedRowKeys, setSelectedRowKeys ] = useState('')
+
+  // 初始化数据 ( 处理发送2次的情况 )
+  useEffect(() => {
+    const timeout = setTimeout(() => loadMenu(), 100)
+    return () => clearTimeout(timeout)
+
+    async function loadMenu() {
+      await menuStore.getMenuList().then(res => {
+        const { data } = res
+        const list = createTreeData(data)
+        setDataList(list)
+      })
+    }
+  },[])
+    
   const columns = [
     {
       title: '规则名称',
@@ -11,53 +30,18 @@ export default function GroupRole({ activeVisible, onCloseModal, onFinishModal }
       key: 'name',
     },
   ];
-  
+  console.log(dataList);
   const data = [
     {
-      key: 1,
-      name: '111',
+      id: 1, pid: 0, key: 1, name: '首页', 
       children: [
         {
-          key: 11,
-          name: '222',
+          id: 2, pid: 1, key: 2, name: '数据概要'
         },
         {
-          key: 12,
-          name: '333',
-          children: [
-            {
-              key: 121,
-              name: '444',
-            },
-          ],
-        },
-        {
-          key: 13,
-          name: '555',
-          children: [
-            {
-              key: 131,
-              name: '666',
-              children: [
-                {
-                  key: 1311,
-                  name: '777',
-                },
-                {
-                  key: 1312,
-                  name: '888',
-                },
-              ],
-            },
-          ],
+          id: 3, pid: 1, key: 3, name: '系统信息',
         },
       ],
-    },
-    {
-      key: 2,
-      name: '999',
-      age: 32,
-      address: '101010',
     },
   ];
 
@@ -84,7 +68,7 @@ export default function GroupRole({ activeVisible, onCloseModal, onFinishModal }
           <Table
             columns={columns}
             rowSelection={{ ...rowSelection }}
-            dataSource={data}
+            dataSource={ data }
           />
           <Button onClick={(e) => {e.preventDefault();e.stopPropagation();onCloseModal()}}>关闭</Button>
           <Button type="primary" onClick={(e) => {e.preventDefault();e.stopPropagation();onFinishModal( selectedRowKeys )}} style={{ marginLeft:10 }}>

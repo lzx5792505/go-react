@@ -1,0 +1,40 @@
+export default function createTreeData(nodes, pid){
+    const groups = {}
+    for(var i in nodes){
+        if(!groups[nodes[i].pid]){
+            groups[nodes[i].pid] = []
+        }
+        groups[nodes[i].pid].push(treeInitData(nodes[i]))
+
+        if(pid && pid === nodes[i].id){
+            pid = nodes[i].pid
+        }
+    }
+
+    function treeInitData(list){
+        const dataList = {
+            id:list['id'],
+            pid:list['pid'] ?? 0,
+            key:list['id'],
+            name:list['title'],
+        }
+        return dataList
+    }
+
+    const rootNodes = groups[pid]
+    groups[pid] = null
+
+    function traverseTree(treeGroup){
+        for(var j in treeGroup){
+            const node = treeGroup[j]
+            if(groups[node.id]){
+                node.children = groups[node.id]
+                groups[node.id] = null
+                traverseTree(node.children)
+            }
+        }
+    }
+
+    traverseTree(rootNodes)
+    return rootNodes
+}

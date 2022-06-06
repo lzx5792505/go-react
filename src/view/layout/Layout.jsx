@@ -67,7 +67,7 @@ function RootLayout () {
       setActiveMenuID(pathname)
       menuData(pathname)
       bread(pathname)
-    }    
+    }
   }, [])
 
   // 跳转公共方法
