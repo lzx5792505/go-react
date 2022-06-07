@@ -8,8 +8,6 @@ import { toJS } from 'mobx'
 import * as Icon from '@ant-design/icons'
 import '@/assets/scss/layout.scss'
 
-import defaultData from '../../utils/defaultData.js'
-
 function RootLayout () {
   const { LogoutOutlined, ClearOutlined  } = Icon
   const navigate = Navigate()
@@ -27,18 +25,22 @@ function RootLayout () {
 
   // 初次渲染选中首页，刷新选中当前菜单 （刷新后菜单保存只有一个，需重写）
   useEffect(() => {
-    // 菜单
-    menuStore.loadMenuList()
-    // 刷新
-    const keys = '/' + pathname.split('/')[1]
-    if(keys === '/'){
-      onPublish()
-    }else{
-      setOpenKeys([ keys, pathname ])
-      setSelectKey([ pathname ])
-      setActiveMenuID(pathname)
-      menuData(pathname)
-      bread(pathname)
+    const timeout = setTimeout(() => loadList(), 100)
+    return () => clearTimeout(timeout)
+    async function loadList() {
+      const res = await menuStore.loadMenuList()
+      if(res.length > 0){
+        const keys = '/' + pathname.split('/')[1]
+        if(keys === '/'){
+          onPublish()
+        }else{
+          setOpenKeys([ keys, pathname ])
+          setSelectKey([ pathname ])
+          setActiveMenuID(pathname)
+          menuData(pathname)
+          bread(pathname)
+        }
+      }
     }
   }, [])
 
@@ -132,7 +134,6 @@ function RootLayout () {
       if(menu){
         setBradMenu(menu.title)
       }
-      
     } else {
       setBrad('')
       setBradMenu('')
@@ -153,7 +154,7 @@ function RootLayout () {
   const renderMenu = item => {
     const { title, url, icon, children } =  item
     return (
-      <Menu.SubMenu key={ url }  title={ title }>
+      <Menu.SubMenu key={ url }   title={ title }>
         {
           children &&
           children.map(item => {
