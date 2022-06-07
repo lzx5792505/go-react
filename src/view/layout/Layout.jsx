@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { Outlet, Link, useLocation as Pathies, useNavigate as  Navigate} from 'react-router-dom'
 import { Layout, Menu, Popconfirm, Breadcrumb, Divider } from 'antd'
+import { useStore as rootStore } from '../../store'
 import TabList from '../../components/TabList'
 import { observer } from 'mobx-react-lite'
+import { toJS } from 'mobx'
 import * as Icon from '@ant-design/icons'
 import '@/assets/scss/layout.scss'
 
-// 模拟数据，写后端在引入真实数据
-import defaultData from '../../utils/defaultData'
-const { LogoutOutlined, ClearOutlined  } = Icon
+import defaultData from '../../utils/defaultData.js'
 
 function RootLayout () {
+  const { LogoutOutlined, ClearOutlined  } = Icon
   const navigate = Navigate()
+  const { menuStore } = rootStore()
   const { pathname } = Pathies()
   const { Header, Sider } = Layout
   const [ openKeys, setOpenKeys ] = useState([])
@@ -22,10 +24,23 @@ function RootLayout () {
   // 面包屑导航
   const [ brad, setBrad ] =  useState('')
   const [ bradMenu, setBradMenu ] = useState('')
-  // 图标显示
-  const iconfont = name => {
-    return React.createElement(Icon[name])
-  }
+
+  // 初次渲染选中首页，刷新选中当前菜单 （刷新后菜单保存只有一个，需重写）
+  useEffect(() => {
+    // 菜单
+    menuStore.loadMenuList()
+    // 刷新
+    const keys = '/' + pathname.split('/')[1]
+    if(keys === '/'){
+      onPublish()
+    }else{
+      setOpenKeys([ keys, pathname ])
+      setSelectKey([ pathname ])
+      setActiveMenuID(pathname)
+      menuData(pathname)
+      bread(pathname)
+    }
+  }, [])
 
   // 选中一级菜单
   const onOpenChange = path => {
@@ -56,20 +71,6 @@ function RootLayout () {
     bread(e.key)
   }
 
-  // 初次渲染选中首页，刷新选中当前菜单 （刷新后菜单保存只有一个，需重写）
-  useEffect(() => {
-    const keys = '/' + pathname.split('/')[1]
-    if(keys === '/'){
-      onPublish()
-    }else{
-      setOpenKeys([ keys, pathname ])
-      setSelectKey([ pathname ])
-      setActiveMenuID(pathname)
-      menuData(pathname)
-      bread(pathname)
-    }
-  }, [])
-
   // 跳转公共方法
   const onPublish = () => {
     setOpenKeys([ '/home', '/' ])
@@ -82,7 +83,7 @@ function RootLayout () {
 
   // 顶部选中菜单数据
   const menuData = key => {
-    defaultData.find(item => {
+    toJS(menuStore.menuList).find(item => {
       return item.children.length && item.children.find(child => {
         if(child.url === key && !openMenuData.includes(child)){
           setOpenMenuData([ ...openMenuData, child ])
@@ -90,33 +91,6 @@ function RootLayout () {
         return false
       })
     })
-  }
-
-  // 渲染父级菜单
-  const renderMenu = item => {
-    const { title, url, icon, children } =  item
-    return (
-      <Menu.SubMenu key={ url } icon={ icon && iconfont(icon) } title={ title }>
-        {
-          children &&
-          children.map(item => {
-            return item.children && item.children.length > 0 ?
-              renderMenu(item) :
-              renderMenuItem(item)
-          })
-        }
-      </Menu.SubMenu>
-    )
-  }
-
-  // 渲染子级菜单
-  const renderMenuItem = item => {
-    const { title, url, icon } =  item
-    return (
-      <Menu.Item icon={ icon && iconfont(icon) } key={ url }>
-        <Link to={ url }>{ title }</Link>
-      </Menu.Item>
-    )
   }
 
   // 点击菜单顶部显示
@@ -146,7 +120,7 @@ function RootLayout () {
   const bread = url => {
     const key = '/' + url.split('/')[1]
     if(key !== '/' && key !== '/home'){
-      defaultData.find(item => {
+      toJS(menuStore.menuList).find(item => {
         return item.children.length && item.children.find(child => {
           if(child.url === url){
             setBrad(child.title)
@@ -154,8 +128,11 @@ function RootLayout () {
           return false
         })
       })
-      const menu = defaultData.find(item => item.url === key)
-      setBradMenu(menu.title)
+      const menu = toJS(menuStore.menuList).find(item => item.url === key)
+      if(menu){
+        setBradMenu(menu.title)
+      }
+      
     } else {
       setBrad('')
       setBradMenu('')
@@ -170,6 +147,33 @@ function RootLayout () {
   //清除缓存
   const onClear = () => {
     console.log('clear');
+  }
+ 
+  // 渲染父级菜单
+  const renderMenu = item => {
+    const { title, url, icon, children } =  item
+    return (
+      <Menu.SubMenu key={ url }  title={ title }>
+        {
+          children &&
+          children.map(item => {
+            return item.children && item.children.length > 0 ?
+              renderMenu(item) :
+              renderMenuItem(item)
+          })
+        }
+      </Menu.SubMenu>
+    )
+  }
+
+  // 渲染子级菜单
+  const renderMenuItem = item => {
+    const { title, url, icon } =  item
+    return (
+      <Menu.Item icon={ icon && React.createElement(Icon[icon]) } key={ url }>
+        <Link to={ url }>{ title }</Link>
+      </Menu.Item>
+    )
   }
 
   return (
@@ -220,8 +224,8 @@ function RootLayout () {
             style={{ height: '100%', borderRight: 0 }}
           >
             {
-              defaultData &&
-              defaultData.map(item => {
+              toJS(menuStore.menuList) &&
+              toJS(menuStore.menuList).map(item => {
                 return item.children && item.children.length > 0 ?
                   renderMenu(item) :
                   renderMenuItem(item)

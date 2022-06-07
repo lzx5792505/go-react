@@ -4,10 +4,12 @@ import classNames from 'classnames';
 import { CloseCircleOutlined  } from '@ant-design/icons'
 
 export default function TabList({ item, activeId, onTabClick, onCloseTab }) {
+    const data = [ ...new Set(item.map(e=>JSON.stringify(e))) ].map( e => JSON.parse(e) )
+
     return (
         <>
             {
-                item.map(item => {
+                data.map(item => {
                     const fClassname = classNames({
                         'menu-item':true,
                         'menu-active':item.url === activeId

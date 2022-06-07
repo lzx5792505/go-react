@@ -1,8 +1,8 @@
-import { useRef as Refs, useEffect as Effect } from 'react'
+import { useRef, useEffect as Effect } from 'react'
 import * as echarts from 'echarts'
 
 export default function Index ({ title,  xData, yData, echStyle}) {
-    const domRef = Refs()
+    const domRef = useRef()
 
     const chartsInit = () => {
         const myChart = echarts.init(domRef.current)

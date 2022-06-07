@@ -14,9 +14,11 @@ export default function createTreeData(nodes, pid){
     function treeInitData(list){
         const dataList = {
             id:list['id'],
+            title:list['title'],
+            url: list['name'],
+            icon: list['icon'],
             pid:list['pid'] ?? 0,
             key:list['id'],
-            name:list['title'],
         }
         return dataList
     }
