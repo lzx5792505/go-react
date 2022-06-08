@@ -1,9 +1,11 @@
+import React from 'react'
+import * as Icon from '@ant-design/icons'
 import { createBrowserHistory } from 'history'
 
 const history = createBrowserHistory()
 
 // 树形数据结构
-const  createTreeData = (nodes, pid) => {
+const createTreeData = (nodes, pid) => {
     const groups = {}
     for(var i in nodes){
         if(!groups[nodes[i].pid]){
@@ -19,11 +21,10 @@ const  createTreeData = (nodes, pid) => {
     function treeInitData(list){
         const dataList = {
             id:list['id'],
-            title:list['title'],
-            url: list['name'],
-            icon: list['icon'],
             pid:list['pid'] ?? 0,
-            key:list['id'],
+            label:list['title'],
+            key:list['name'],
+            icon: list['icon'] ? React.createElement(Icon[list['icon']]) : ''
         }
         return dataList
     }

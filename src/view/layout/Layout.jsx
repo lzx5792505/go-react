@@ -4,14 +4,12 @@ import { Layout, Menu, Popconfirm, Breadcrumb, Divider } from 'antd'
 import { useStore as rootStore } from '../../store'
 import TabList from '../../components/TabList'
 import { observer } from 'mobx-react-lite'
-import * as AntIcon from '@ant-design/icons'
+import { LogoutOutlined, ClearOutlined } from '@ant-design/icons'
 import '@/assets/scss/layout.scss'
 
 function RootLayout () {
   const navigate = Navigate()
-  const { SubMenu, Item } = Menu
   const { Header, Sider } = Layout
-  const { LogoutOutlined, ClearOutlined, MailOutlined } = AntIcon
 
   const menuList =  useRef([])
   const { menuStore } = rootStore()
@@ -145,45 +143,6 @@ function RootLayout () {
     console.log('clear');
   }
 
-  const iconFont = (name) => {
-    if(name){
-      return React.createElement(AntIcon[name])
-    }
-  }
-
-  // 渲染父级菜单
-  const renderMenu = item => {
-    const { title, url, children } =  item
-    return (
-      <SubMenu 
-        key={url}  
-        title={title}
-      >
-        {
-          children &&
-          children.map(item => {
-            return item.children && item.children.length > 0 ?
-              renderMenu(item) :
-              renderMenuItem(item)
-          })
-        }
-      </SubMenu>
-    )
-  }
-
-  // 渲染子级菜单
-  const renderMenuItem = item => {
-    const { title, url, icon } =  item
-    return (
-      <Item 
-        icon={ icon && iconFont(icon) } 
-        key={url}
-      >
-        <Link to={url}>{title}</Link>
-      </Item>
-    )
-  }
-
   // 跳转公共方法
   const onPublish = () => {
     setOpenKeys([ '/home', '/' ])
@@ -240,16 +199,8 @@ function RootLayout () {
             onClick={ onClickMenu }
             selectedKeys={ selectKey }
             style={{ height: '100%', borderRight: 0 }}
-          >
-            {
-              menuList.current &&
-              menuList.current.map(item => {
-                return item.children && item.children.length > 0 ?
-                  renderMenu(item) :
-                  renderMenuItem(item)
-              })
-            }
-          </Menu>
+            items={menuList.current}
+          />
         </Sider>
         <Layout className="layout-content" style={{ padding: 20 }}>
           {/* 面包屑 */}
