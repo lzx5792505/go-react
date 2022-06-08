@@ -47,7 +47,22 @@ const  noRepetition = data => {
     return [ ...new Set(data.map(e=>JSON.stringify(e))) ].map( e => JSON.parse(e) )
 }
 
+const setStorage = (key, token ) => {
+    return window.localStorage.setItem(key, token)
+}
+
+const getStorage = (key) => {
+    return window.localStorage.getItem(key)
+}
+
+const removeStorage = (key) => {
+    return window.localStorage.removeItem(key)
+}
+
 export {
+    setStorage,
+    getStorage,
+    noRepetition,
+    removeStorage,
     createTreeData,
-    noRepetition
 }

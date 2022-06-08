@@ -1,10 +1,8 @@
 import { history } from "./history"
-import { tokenKey, menuKey } from './statusCode'
-import { createTreeData, noRepetition } from './helper'
-import { setStorage, getStorage, removeStorage } from './storage'
+import { tokenKey } from './statusCode'
+import { createTreeData, noRepetition, setStorage, getStorage, removeStorage } from './helper'
 
 export { 
-    menuKey,
     history,
     tokenKey,
     setStorage, 
