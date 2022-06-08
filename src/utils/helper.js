@@ -1,3 +1,7 @@
+import { createBrowserHistory } from 'history'
+
+const history = createBrowserHistory()
+
 // 树形数据结构
 const  createTreeData = (nodes, pid) => {
     const groups = {}
@@ -60,6 +64,7 @@ const removeStorage = (key) => {
 }
 
 export {
+    history,
     setStorage,
     getStorage,
     noRepetition,
