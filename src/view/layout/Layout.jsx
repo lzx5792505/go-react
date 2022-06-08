@@ -4,14 +4,14 @@ import { Layout, Menu, Popconfirm, Breadcrumb, Divider } from 'antd'
 import { useStore as rootStore } from '../../store'
 import TabList from '../../components/TabList'
 import { observer } from 'mobx-react-lite'
-import * as Icon from '@ant-design/icons'
+import * as AntIcon from '@ant-design/icons'
 import '@/assets/scss/layout.scss'
 
 function RootLayout () {
   const navigate = Navigate()
   const { SubMenu, Item } = Menu
   const { Header, Sider } = Layout
-  const { LogoutOutlined, ClearOutlined  } = Icon
+  const { LogoutOutlined, ClearOutlined, MailOutlined } = AntIcon
 
   const menuList =  useRef([])
   const { menuStore } = rootStore()
@@ -146,14 +146,19 @@ function RootLayout () {
   }
 
   const iconFont = (name) => {
-    return React.createElement(Icon[name])
+    if(name){
+      return React.createElement(AntIcon[name])
+    }
   }
 
   // 渲染父级菜单
   const renderMenu = item => {
-    const { title, url, icon, children } =  item
+    const { title, url, children } =  item
     return (
-      <SubMenu key={url} icon={ icon } title={title}>
+      <SubMenu 
+        key={url}  
+        title={title}
+      >
         {
           children &&
           children.map(item => {
@@ -170,7 +175,10 @@ function RootLayout () {
   const renderMenuItem = item => {
     const { title, url, icon } =  item
     return (
-      <Item icon={ icon && iconFont(icon) } key={url}>
+      <Item 
+        icon={ icon && iconFont(icon) } 
+        key={url}
+      >
         <Link to={url}>{title}</Link>
       </Item>
     )
