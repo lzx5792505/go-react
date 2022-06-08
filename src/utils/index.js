@@ -1,4 +1,4 @@
-import { tokenKey } from './statusCode'
+import { tokenKey } from './code'
 import { history, createTreeData, noRepetition, setStorage, getStorage, removeStorage } from './helper'
 
 export { 
