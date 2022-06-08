@@ -21,6 +21,8 @@ const createTreeData = (nodes, pid) => {
     function treeInitData(list){
         const dataList = {
             id:list['id'],
+            title:list['title'],
+            url:list['name'],
             pid:list['pid'] ?? 0,
             label:list['title'],
             key:list['name'],
