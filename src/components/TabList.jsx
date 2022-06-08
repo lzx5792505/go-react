@@ -1,16 +1,14 @@
 import React from 'react';
 import  PropTypes  from 'prop-types';
 import classNames from 'classnames';
+import { noRepetition } from '@/utils'
 import { CloseCircleOutlined  } from '@ant-design/icons'
 
 export default function TabList({ item, activeId, onTabClick, onCloseTab }) {
-    // 去重
-    const data = [ ...new Set(item.map(e=>JSON.stringify(e))) ].map( e => JSON.parse(e) )
-
     return (
         <>
             {
-                data.map(item => {
+                noRepetition(item).map(item => {
                     const fClassname = classNames({
                         'menu-item':true,
                         'menu-active':item.url === activeId

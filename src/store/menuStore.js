@@ -1,6 +1,6 @@
 import { http } from './http'
 import { makeAutoObservable } from 'mobx'
-import createTreeData from '../utils/helper'
+import { createTreeData } from '@/utils'
 
 export default class MenuStore {
     menuList = []

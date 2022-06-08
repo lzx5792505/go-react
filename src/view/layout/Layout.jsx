@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Outlet, Link, useLocation as Pathies, useNavigate as  Navigate} from 'react-router-dom'
 import { Layout, Menu, Popconfirm, Breadcrumb, Divider } from 'antd'
 import { useStore as rootStore } from '../../store'
 import TabList from '../../components/TabList'
 import { observer } from 'mobx-react-lite'
-import { toJS } from 'mobx'
 import * as Icon from '@ant-design/icons'
 import '@/assets/scss/layout.scss'
 
 function RootLayout () {
-  const { LogoutOutlined, ClearOutlined  } = Icon
   const navigate = Navigate()
+  const { SubMenu, Item } = Menu
+  const { Header, Sider } = Layout
+  const { LogoutOutlined, ClearOutlined  } = Icon
+
+  const menuList =  useRef([])
   const { menuStore } = rootStore()
   const { pathname } = Pathies()
-  const { Header, Sider } = Layout
   const [ openKeys, setOpenKeys ] = useState([])
   const [ selectKey, setSelectKey ] = useState([])
   // Tab存储仓库
@@ -30,6 +32,9 @@ function RootLayout () {
     async function loadList() {
       const res = await menuStore.loadMenuList()
       if(res.length > 0){
+        // 菜单数据
+        menuList.current = res
+        // 刷新tab
         const keys = '/' + pathname.split('/')[1]
         if(keys === '/'){
           onPublish()
@@ -73,19 +78,9 @@ function RootLayout () {
     bread(e.key)
   }
 
-  // 跳转公共方法
-  const onPublish = () => {
-    setOpenKeys([ '/home', '/' ])
-    setSelectKey([ '/' ])
-    setActiveMenuID('/')
-    menuData('/')
-    bread('/')
-    navigate('/')
-  }
-
   // 顶部选中菜单数据
   const menuData = key => {
-    toJS(menuStore.menuList).find(item => {
+    menuList.current.find(item => {
       return item.children.length && item.children.find(child => {
         if(child.url === key && !openMenuData.includes(child)){
           setOpenMenuData([ ...openMenuData, child ])
@@ -95,7 +90,7 @@ function RootLayout () {
     })
   }
 
-  // 点击菜单顶部显示
+  // 点击菜单 --- 顶部显示
   const tabClick = ids => {
     setActiveMenuID(ids)
     bread(ids)
@@ -122,7 +117,7 @@ function RootLayout () {
   const bread = url => {
     const key = '/' + url.split('/')[1]
     if(key !== '/' && key !== '/home'){
-      toJS(menuStore.menuList).find(item => {
+      menuList.current.find(item => {
         return item.children.length && item.children.find(child => {
           if(child.url === url){
             setBrad(child.title)
@@ -130,7 +125,7 @@ function RootLayout () {
           return false
         })
       })
-      const menu = toJS(menuStore.menuList).find(item => item.url === key)
+      const menu = menuList.current.find(item => item.url === key)
       if(menu){
         setBradMenu(menu.title)
       }
@@ -149,12 +144,16 @@ function RootLayout () {
   const onClear = () => {
     console.log('clear');
   }
- 
+
+  const iconFont = (name) => {
+    return React.createElement(Icon[name])
+  }
+
   // 渲染父级菜单
   const renderMenu = item => {
     const { title, url, icon, children } =  item
     return (
-      <Menu.SubMenu key={ url }   title={ title }>
+      <SubMenu key={url} icon={ icon } title={title}>
         {
           children &&
           children.map(item => {
@@ -163,7 +162,7 @@ function RootLayout () {
               renderMenuItem(item)
           })
         }
-      </Menu.SubMenu>
+      </SubMenu>
     )
   }
 
@@ -171,10 +170,20 @@ function RootLayout () {
   const renderMenuItem = item => {
     const { title, url, icon } =  item
     return (
-      <Menu.Item icon={ icon && React.createElement(Icon[icon]) } key={ url }>
-        <Link to={ url }>{ title }</Link>
-      </Menu.Item>
+      <Item icon={ icon && iconFont(icon) } key={url}>
+        <Link to={url}>{title}</Link>
+      </Item>
     )
+  }
+
+  // 跳转公共方法
+  const onPublish = () => {
+    setOpenKeys([ '/home', '/' ])
+    setSelectKey([ '/' ])
+    setActiveMenuID('/')
+    menuData('/')
+    bread('/')
+    navigate('/')
   }
 
   return (
@@ -225,8 +234,8 @@ function RootLayout () {
             style={{ height: '100%', borderRight: 0 }}
           >
             {
-              toJS(menuStore.menuList) &&
-              toJS(menuStore.menuList).map(item => {
+              menuList.current &&
+              menuList.current.map(item => {
                 return item.children && item.children.length > 0 ?
                   renderMenu(item) :
                   renderMenuItem(item)

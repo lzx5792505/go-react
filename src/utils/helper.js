@@ -1,4 +1,5 @@
-export default function createTreeData(nodes, pid){
+// 树形数据结构
+const  createTreeData = (nodes, pid) => {
     const groups = {}
     for(var i in nodes){
         if(!groups[nodes[i].pid]){
@@ -39,4 +40,14 @@ export default function createTreeData(nodes, pid){
 
     traverseTree(rootNodes)
     return rootNodes
+}
+
+// 数组去重
+const  noRepetition = data => {
+    return [ ...new Set(data.map(e=>JSON.stringify(e))) ].map( e => JSON.parse(e) )
+}
+
+export {
+    createTreeData,
+    noRepetition
 }
