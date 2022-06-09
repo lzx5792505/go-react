@@ -10,7 +10,7 @@ import GroupEdit from './GroupEdit';
 import GroupRole from './GroupRole'
 
 function GroupList() {
-  // mobx 用户方法
+  // mobx 方法
   const { groupStore } = rootStore()
   const enterPressed = useKeyPress(13)
   // 列表

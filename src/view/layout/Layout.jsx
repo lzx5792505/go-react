@@ -67,11 +67,12 @@ function RootLayout () {
       }
     }
   }
-  
+
   // 点击菜单
   const onClickMenu = e => {
     setSelectKey([ e.key ])
     setActiveMenuID(e.key)
+    navigate(e.key)
     menuData(e.key)
     bread(e.key)
   }
