@@ -1,8 +1,6 @@
 import axios from "axios"
 import { getStorage, removeStorage, tokenKey, history } from '@/utils'
 
-// const serverUrl = window.location.origin;
-
 const http = axios.create({
     baseURL: 'http://localhost:3080/api/v1',
     timeout: 5000

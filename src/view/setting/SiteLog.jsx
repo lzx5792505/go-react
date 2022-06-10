@@ -19,8 +19,6 @@ function SiteLog() {
   const [ paramies, setParamies ] = useState({
     page:1,
     pre_page:10,
-    created_at:'',
-    updated_at: '',
   })
 
   // 列表字段
@@ -42,7 +40,7 @@ function SiteLog() {
     },
     {
       title: '登录时间',
-      dataIndex: 'updated_at',
+      dataIndex: 'created_at',
       align:'center'
     }
   ]
@@ -70,16 +68,22 @@ function SiteLog() {
 
   const onStartChange = (date, dateString) => {
     const _params = {}
+
     if(dateString){
       _params.created_at = dateString
+    } else {
+      _params.created_at = ''
     }
     setParamies({ ...paramies, ..._params })
   }
 
   const onLastChange = (date, dateString) => {
     const _params = {}
+
     if(dateString){
       _params.updated_at = dateString
+    } else {
+      _params.updated_at = ''
     }
     setParamies({ ...paramies, ..._params })
   }
@@ -89,7 +93,6 @@ function SiteLog() {
 
   const searchList = () => {
     paramies.search = inputValue
-    
     siteStore.getSearchList(paramies).then(res => {
       dataList(res)
     })
@@ -101,10 +104,8 @@ function SiteLog() {
       list:data,
       count:pager.TotalCount,
     })
-    setParamies({ 
-      page:pager.CurrentPage, 
-      per_page:pager.PerPage 
-    })
+    paramies.page = pager.CurrentPage
+    paramies.per_page = pager.PerPage
   }
 
   return (
@@ -116,7 +117,7 @@ function SiteLog() {
           form={ form }
         >
             <Row gutter={24}>
-              <Col span={3} key="1">
+              <Col span={6} key="1">
                 <Form.Item name="search">
                     <Input onChange={(e) => { setInputValue(e.target.value) }} size='large' placeholder='请输账号 或者 昵称' />
                 </Form.Item>
