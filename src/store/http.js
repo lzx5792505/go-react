@@ -1,5 +1,7 @@
 import axios from "axios"
-import { getStorage, tokenKey, history } from '@/utils'
+import { getStorage, removeStorage, tokenKey, history } from '@/utils'
+
+const serverUrl = window.location.origin;
 
 const http = axios.create({
     baseURL: 'http://localhost:3080/api/v1',
@@ -21,7 +23,8 @@ http.interceptors.response.use(res => {
     return res.data ? res.data : res;
 }, err => {
     if(err.response.status === 401 ){
-        history.push('./login')
+        removeStorage(tokenKey)
+        history.push( serverUrl +'/login')
     }
     let msg = err.response.message ? err.response.message : err
     return Promise.reject(msg)

@@ -1,4 +1,6 @@
 import React from 'react'
+
+import SiteStore from './siteStore'
 import UserStore from './userStore'
 import MenuStore from './menuStore'
 import GroupStore from './groupStore'
@@ -7,6 +9,7 @@ import ConfigStore from './configStore'
 
 class RootStore {
     constructor() {
+        this.siteStore = new SiteStore()
         this.menuStore = new MenuStore()
         this.userStore =  new UserStore()
         this.loginStore = new LoginStore()

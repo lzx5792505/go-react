@@ -3,21 +3,23 @@ import React, { useEffect, useState } from 'react'
 import 'moment/locale/zh-cn'
 import { observer } from 'mobx-react-lite'
 import useKeyPress from '../../hooks/useKeyPress';
+import { useStore as rootStore } from '../../store';
 import locale from 'antd/es/date-picker/locale/zh_CN'
 import { Table, Row, Col, Card, Form, Button, Input, DatePicker } from 'antd'
 
 function SiteLog() {
   const [ form ] = Form.useForm()
+  const { siteStore } = rootStore()
   const enterPressed = useKeyPress(13)
   const [ sieLogList, setSieLogList ] = useState({
     list:[],
     count:0,
-    startDate:'',
-    lastDate: '',
   })
   const [ paramies, setParamies ] = useState({
     page:1,
-    pre_page:10
+    pre_page:10,
+    created_at:'',
+    updated_at: '',
   })
 
   // 列表字段
@@ -34,29 +36,25 @@ function SiteLog() {
     },
     {
       title: '最后登录IP',
-      dataIndex: 'title',
+      dataIndex: 'last_login_ip',
       align:'center'
     },
     {
       title: '登录时间',
-      dataIndex: 'last_login_time',
+      dataIndex: 'updated_at',
       align:'center'
     }
   ]
 
   useEffect(() => {
-    setSieLogList({
-      list:[
-        {
-          id:1,
-          user:'测试数据',
-          name:'测试名称',
-          title:'超级管理员',
-          last_login_time:'2022-04-28'
-        }
-      ],
-      count:1
-    })
+    const timeout = setTimeout(() => loadList(), 100)
+    return () => clearTimeout(timeout)
+
+    async function loadList() {
+      await siteStore.getLogList().then(res => {
+        dataList(res)
+      })
+    }
   },[])
 
   useEffect(() => {
@@ -72,29 +70,42 @@ function SiteLog() {
     if(search !== -1){
       _params.search = search
     }
-    if(sieLogList.startDate){
-      _params.startDate = sieLogList.startDate
+    if(sieLogList.updated_at){
+      _params.created_at = paramies.created_at
     }
     if(sieLogList.lastDate){
-      _params.lastDate = sieLogList.lastDate
+      _params.updated_at = paramies.updated_at
     }
 
     setParamies({ ...paramies, ..._params })
   }
 
   const onStartChange = (date, dateString) => {
-    setSieLogList({
-      startDate:dateString
+    setParamies({
+      created_at:dateString
     })
   }
 
   const onLastChange = (date, dateString) => {
-    setSieLogList({
-      lastDate:dateString
+    setParamies({
+      updated_at:dateString
     })
   }
 
   const pageChange = () => {
+  }
+
+  const dataList = (res) => {
+    const { data, pager } = res
+
+    setSieLogList({
+      list:data,
+      count:pager.TotalCount,
+    })
+    setParamies({ 
+      page:pager.CurrentPage, 
+      per_page:pager.PerPage 
+    })
   }
 
   return (
