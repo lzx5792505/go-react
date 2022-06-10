@@ -209,15 +209,13 @@ function UserList() {
 
   // 数据列表
   const userDataList = (res, msg) => {
-    const data = {
-      page : paramies.page,
-      per_page : paramies.per_page,
-      search : inputValue
-    }
+    paramies.search = inputValue
+
     if(res && (res.code === 200 || res.code === 201)){
       message.success(msg ?? res.message)
     }
-    userStore.getUserList(data).then(res => {
+    
+    userStore.getUserList(paramies).then(res => {
       dataList(res)
     })
   }

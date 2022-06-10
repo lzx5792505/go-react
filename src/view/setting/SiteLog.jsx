@@ -11,6 +11,7 @@ function SiteLog() {
   const [ form ] = Form.useForm()
   const { siteStore } = rootStore()
   const enterPressed = useKeyPress(13)
+  const [ inputValue, setInputValue ] = useState('')
   const [ sieLogList, setSieLogList ] = useState({
     list:[],
     count:0,
@@ -58,46 +59,44 @@ function SiteLog() {
   },[])
 
   useEffect(() => {
-    const search = form.getFieldValue('search')
-    if(enterPressed && search.length > 0){
-      onFinish(search)
+    if(enterPressed ){
+      searchList()
     }
   },[ enterPressed ])
 
   const onFinish = value => {
-    const {search } = value
-    const _params = {}
-    if(search !== -1){
-      _params.search = search
-    }
-    if(sieLogList.updated_at){
-      _params.created_at = paramies.created_at
-    }
-    if(sieLogList.lastDate){
-      _params.updated_at = paramies.updated_at
-    }
-
-    setParamies({ ...paramies, ..._params })
+    searchList()
   }
 
   const onStartChange = (date, dateString) => {
-    setParamies({
-      created_at:dateString
-    })
+    const _params = {}
+    if(dateString){
+      _params.created_at = dateString
+    }
+    setParamies({ ...paramies, ..._params })
   }
 
   const onLastChange = (date, dateString) => {
-    setParamies({
-      updated_at:dateString
-    })
+    const _params = {}
+    if(dateString){
+      _params.updated_at = dateString
+    }
+    setParamies({ ...paramies, ..._params })
   }
 
   const pageChange = () => {
   }
 
+  const searchList = () => {
+    paramies.search = inputValue
+    
+    siteStore.getSearchList(paramies).then(res => {
+      dataList(res)
+    })
+  }
+
   const dataList = (res) => {
     const { data, pager } = res
-
     setSieLogList({
       list:data,
       count:pager.TotalCount,
@@ -114,22 +113,21 @@ function SiteLog() {
         <Form
           layout="horizontal"
           onFinish={ onFinish }
-          initialValues={{ status: -1 }}
           form={ form }
         >
             <Row gutter={24}>
               <Col span={3} key="1">
                 <Form.Item name="search">
-                    <Input size='large' placeholder='请输账号 或者 昵称' />
+                    <Input onChange={(e) => { setInputValue(e.target.value) }} size='large' placeholder='请输账号 或者 昵称' />
                 </Form.Item>
               </Col>
               <Col span={3} key="2">
-                <Form.Item  name="start_date">
+                <Form.Item  name="created_at">
                   <DatePicker locale={locale} placeholder="开始日期" onChange={onStartChange} style={{ marginTop:5}}></DatePicker>
                 </Form.Item>
               </Col>
               <Col span={3} key="3">
-                <Form.Item  name="last_date">
+                <Form.Item  name="updated_at">
                   <DatePicker locale={locale} placeholder="结束日期" onChange={onLastChange} style={{ marginTop:5}}></DatePicker>
                 </Form.Item>
               </Col>
