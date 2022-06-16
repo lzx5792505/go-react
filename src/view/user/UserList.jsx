@@ -93,19 +93,23 @@ function UserList() {
               icon={<EditOutlined />}
               onClick={ () => goPublish(data.id) }
             />
-            <Popconfirm
-            onConfirm={() => delData(data.id) }
-              title="是否确认删除？" 
-              okText="确认" 
-              cancelText="取消"
-            >
-              <Button
-                type="primary"
-                danger
-                shape="circle"
-                icon={<DeleteOutlined />}
-              />
-            </Popconfirm>
+            {
+              data.id !== 1 && 
+              <Popconfirm
+                onConfirm={() => delData(data.id) }
+                  title="是否确认删除？" 
+                  okText="确认" 
+                  cancelText="取消"
+                >
+                  <Button
+                    type="primary"
+                    danger
+                    shape="circle"
+                    icon={<DeleteOutlined />}
+                  />
+              </Popconfirm>
+            }
+            
           </Space>
         )
       },
