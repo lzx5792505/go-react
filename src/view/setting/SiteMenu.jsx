@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react'
+import { toJS } from 'mobx'
+import { useStore as rootStore } from '../../store'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { Table, Row, Card, Form, Button, Popconfirm, Space } from 'antd'
 
 import SiteMenuEdit from './SiteMenuEdit'
 
 function SiteMenu() {
-  const [ siteMenu, setSiteMenu ] = useState({
-    list:[],
-  })
+  // 数据
+  const { menuStore } = rootStore()
+  const [ siteMenu, setSiteMenu ] = useState([])
+
 
   // 列表字段
   const columns = [
@@ -18,143 +21,61 @@ function SiteMenu() {
     },
     {
       title: '权限名称',
-      dataIndex: 'name',
+      dataIndex: 'url',
       align:'center'
-    },
-    {
-      title: '类型',
-      dataIndex: 'login_count',
-      align:'center',
-      defaultSortOrder:'descend'
     },
     {
       title: '图标',
-      dataIndex: 'user',
+      dataIndex: 'icon',
       align:'center'
-    },
-    {
-      title: '排序',
-      dataIndex: 'last_login_ip',
-      align:'center',
-      defaultSortOrder:'descend'
     },
     {
       title: '操作',
       align:'center',
       render: data => {
         return (
-          <Space size="middle">
-            <Button
-              type="primary"
-              shape="circle"
-              icon={<EditOutlined />}
-              onClick={ () => goPublish(data.id) }
-            />
-            <Popconfirm
-            onConfirm={() => delData(data.id) }
-              title="是否确认删除？" 
-              okText="确认" 
-              cancelText="取消"
-            >
-              <Button
-                type="primary"
-                danger
-                shape="circle"
-                icon={<DeleteOutlined />}
-              />
-            </Popconfirm>
-          </Space>
+          <>
+            {
+              data.id !== 1 && data.id !== 2 && data.id !== 3 &&
+              <Space size="middle">
+                <Button
+                  type="primary"
+                  shape="circle"
+                  icon={<EditOutlined />}
+                  onClick={ () => goPublish(data.id) }
+                />
+                <Popconfirm
+                onConfirm={() => delData(data.id) }
+                  title="是否确认删除？" 
+                  okText="确认" 
+                  cancelText="取消"
+                >
+                  <Button
+                    type="primary"
+                    danger
+                    shape="circle"
+                    icon={<DeleteOutlined />}
+                  />
+                </Popconfirm>
+              </Space>
+            }
+          </> 
         )
       },
       fixed: 'right'
     }
   ]
 
+
+  // 初始化数据 ( 处理发送2次的情况 )
   useEffect(() => {
-    setSiteMenu({
-      list:[
-        {
-          id:111,
-          user:'测试数据',
-          name:'测试名称',
-          title:'超级管理员',
-          login_count:1,
-          last_login_ip:'127.0.0.1',
-        },
-        {
-          id:1,
-          user:'测试数据',
-          name:'测试名称',
-          title:'超级管理员',
-          login_count:1,
-          last_login_ip:'127.0.0.1',
-          children: [
-            {
-              id:2,
-              user:'测试数据',
-              name:'测试名称',
-              title:'超级管理员',
-              login_count:1,
-              last_login_ip:'127.0.0.1',
-            },
-            {
-              id:3,
-              user:'测试数据',
-              name:'测试名称',
-              title:'超级管理员',
-              login_count:1,
-              last_login_ip:'127.0.0.1',
-              children: [
-                {
-                  id:4,
-                  user:'测试数据',
-                  name:'测试名称',
-                  title:'超级管理员',
-                  login_count:1,
-                  last_login_ip:'127.0.0.1',
-                },
-              ],
-            },
-            {
-              id:5,
-              user:'测试数据',
-              name:'测试名称',
-              title:'超级管理员',
-              login_count:1,
-              last_login_ip:'127.0.0.1',
-              children: [
-                {
-                  id:6,
-                  user:'测试数据',
-                  name:'测试名称',
-                  title:'超级管理员',
-                  login_count:1,
-                  last_login_ip:'127.0.0.1',
-                  children: [
-                    {
-                      id:7,
-                      user:'测试数据',
-                      name:'测试名称',
-                      title:'超级管理员',
-                      login_count:1,
-                      last_login_ip:'127.0.0.1',
-                    },
-                    {
-                      id:8,
-                      user:'测试数据',
-                      name:'测试名称',
-                      title:'超级管理员',
-                      login_count:1,
-                      last_login_ip:'127.0.0.1',
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        }
-      ],
-    })
+    const timeout = setTimeout(() => loadList(), 100)
+    return () => clearTimeout(timeout)
+
+    async function loadList() {
+      const res =  await menuStore.loadMenuList()
+      setSiteMenu(res)
+    }
   },[])
 
   const delData = id => {
@@ -228,7 +149,7 @@ function SiteMenu() {
       <Table
         rowKey="id"
         columns={columns}
-        dataSource={siteMenu.list}
+        dataSource={ toJS(siteMenu) }
         pagination={false}
         defaultExpandAllRows={true}
       />
