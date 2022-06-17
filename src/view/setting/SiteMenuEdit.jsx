@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { http } from '../../store/http'
 import { Drawer, Form, Button, Input, Radio, Select } from 'antd';
 
 export default function SiteMenuEdit({ menuID, activeVisible, onCloseModal, onFinishModal }) {
@@ -7,16 +8,17 @@ export default function SiteMenuEdit({ menuID, activeVisible, onCloseModal, onFi
 
   // 数据回填
   useEffect(() => {
+    const loadDetail = async () => {
+      const res = await http.get(`/menu/one/${menuID}`)
+      const data = res.data
+      // 表单数据回填
+      form.setFieldsValue({ 
+        ...data, 
+      })
+    }
+
     if(menuID){
-      form.setFieldsValue(
-        {
-          user:'测试数据',
-          name:'测试名称',
-          password:'123456',
-          group_id:'1',
-          status:2,
-        }
-      )
+      loadDetail()
     }else {
       form.setFieldsValue({
         user:'',
@@ -44,7 +46,7 @@ export default function SiteMenuEdit({ menuID, activeVisible, onCloseModal, onFi
         <Form 
           form={form}
           onFinish={onFinishModal}
-          initialValues={{ status: 2, menu: 2 }}
+          initialValues={{ status: 1, menu: 1 }}
           validateTrigger={['onBlur','onChange']}
         >
           <Form.Item
@@ -53,8 +55,7 @@ export default function SiteMenuEdit({ menuID, activeVisible, onCloseModal, onFi
             rules={[{ required: true, message: '请选择所属层级' }]}
           >
             <Select placeholder="请选择所属层级">
-              <Option value="1" key="1">所属层级1</Option>
-              <Option value="2" key="2">所属层级2</Option>
+              <Option value="0" key="0">顶层菜单</Option>
             </Select>
           </Form.Item>
     
@@ -66,7 +67,7 @@ export default function SiteMenuEdit({ menuID, activeVisible, onCloseModal, onFi
             <Input placeholder="请输入名称" />
           </Form.Item>
           <Form.Item
-            name="url"
+            name="name"
             label="URL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
             rules={[{ required: true, message: '请输入URL' }]}
           >
@@ -90,8 +91,8 @@ export default function SiteMenuEdit({ menuID, activeVisible, onCloseModal, onFi
             label="类&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型"
           >
             <Radio.Group>
-              <Radio value={1}>行为</Radio>
-              <Radio value={2}>菜单</Radio>
+              <Radio value={1}>菜单</Radio>
+              <Radio value={2}>行为</Radio>
             </Radio.Group>
           </Form.Item>
           <Form.Item 
@@ -99,8 +100,8 @@ export default function SiteMenuEdit({ menuID, activeVisible, onCloseModal, onFi
             label="是&nbsp;否&nbsp;禁&nbsp;用"
           >
             <Radio.Group>
-              <Radio value={1}>禁用</Radio>
-              <Radio value={2}>开启</Radio>
+              <Radio value={1}>开启</Radio>
+              <Radio value={2}>禁用</Radio>
             </Radio.Group>
           </Form.Item>
           <Form.Item>

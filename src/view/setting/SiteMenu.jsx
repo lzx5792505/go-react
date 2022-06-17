@@ -79,26 +79,39 @@ function SiteMenu() {
   },[])
 
   const delData = id => {
-
+    menuStore.delMenu(id)
   }
 
   // 抽屉式数据
   const [ visible, setVisible ] =  useState(false)
   const [ menuID, setMenuID ] =  useState('')
-  // 新增用户
+  // 新增
   const showUserModal = () => {
     setMenuID('')
     setVisible(true)
   }
-  // 编辑用户
+  // 编辑
   const goPublish = id => {
     setMenuID(id)
     setVisible(true)
   }
-  // 保存用户
+  // 保存
   const onFinishModal = value => {
-    console.log(menuID);
-    console.log(value);
+    const { icon, menu, name, pid, sort, status, title } = value
+    const params = {
+      icon,
+      menu,
+      name, 
+      pid,
+      sort: parseInt(sort),
+      status,
+      title
+    }
+    if(menuID){
+      menuStore.updateMenu(menuID, params)
+    } else {
+      menuStore.saveMenu(params)
+    }
     setVisible(false)
   }
   // 关闭抽屉页面
