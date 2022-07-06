@@ -36,7 +36,8 @@ export default function GroupRole({ activeVisible, onCloseModal, onFinishModal }
     },
   ];
 
-  // 点击展开
+  
+  // 点击展开 (可以提取公共方法)
   const [expKeys, setExpKeys] = useState(false);
   const onOpenMenu = () => {
     if(expKeys){
@@ -59,7 +60,6 @@ export default function GroupRole({ activeVisible, onCloseModal, onFinishModal }
 
   return (
     <>
-      
       <Drawer
         title="访问规则"
         width={ 720 }
@@ -96,7 +96,6 @@ export default function GroupRole({ activeVisible, onCloseModal, onFinishModal }
             
           </div>
         </div>
-        
         <Table
           columns={columns}
           rowSelection={{ ...rowSelection }}

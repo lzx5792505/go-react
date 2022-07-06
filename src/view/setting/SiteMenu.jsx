@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef} from 'react'
+import React, { useEffect, useState } from 'react'
 import { toJS } from 'mobx'
 import { useStore as rootStore } from '../../store'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
@@ -119,7 +119,7 @@ function SiteMenu() {
     setVisible(false)
   };
 
-  // 点击展开
+  // 点击展开 (可以提取公共方法)
   const [expKeys, setExpKeys] = useState(false);
   const onOpenMenu = () => {
     if(expKeys){

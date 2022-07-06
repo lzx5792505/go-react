@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import UserEdit from './UserEdit';
 import { http } from '../../store/http'
 import { observer } from 'mobx-react-lite'
-import useKeyPress from '../../hooks/useKeyPress';
+import useKeyPress from '../../hooks/useKeyPress'
 import { useStore as rootStore } from '../../store'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { Table, Switch, Space,Row, Col, Card, Form, Button, Input, Popconfirm, message } from 'antd'
