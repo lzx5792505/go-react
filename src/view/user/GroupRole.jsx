@@ -59,6 +59,7 @@ export default function GroupRole({ activeVisible, onCloseModal, onFinishModal }
 
   return (
     <>
+      
       <Drawer
         title="访问规则"
         width={ 720 }
@@ -70,6 +71,32 @@ export default function GroupRole({ activeVisible, onCloseModal, onFinishModal }
         visible={ activeVisible }
         bodyStyle={{ paddingBottom: 80 }}
       >
+        <div className="d-flex">
+          <div>
+            <Button 
+              onClick={ onOpenMenu }
+              style={{ marginBottom:15}}
+            >
+              展开或折叠全部
+            </Button>
+          </div>
+          <div>
+            <Button 
+              style={{ marginBottom: 15,  marginRight:15}} type="primary" 
+              onClick={(e) => {e.preventDefault();e.stopPropagation();onFinishModal( selectedRowKeys )}}
+            >
+              提交
+            </Button>
+            <Button 
+              style={{ marginBottom:15}} 
+              onClick={(e) => {e.preventDefault();e.stopPropagation();onCloseModal()}}
+            >
+              关闭
+            </Button>
+            
+          </div>
+        </div>
+        
         <Table
           columns={columns}
           rowSelection={{ ...rowSelection }}
@@ -77,17 +104,6 @@ export default function GroupRole({ activeVisible, onCloseModal, onFinishModal }
           expandedRowKeys={ expKeys }
           pagination={false}
         />
-    
-        <Button 
-          onClick={ onOpenMenu }
-          style={{ marginTop:15}}
-        >
-          展开或折叠全部
-        </Button>
-        <Button style={{ marginTop:15, marginLeft:15}} onClick={(e) => {e.preventDefault();e.stopPropagation();onCloseModal()}}>关闭</Button>
-        <Button style={{ marginTop: 15, marginLeft:15}} type="primary" onClick={(e) => {e.preventDefault();e.stopPropagation();onFinishModal( selectedRowKeys )}}>
-          提交
-        </Button>
       </Drawer>
     </>
   );
