@@ -36,6 +36,21 @@ export default function GroupRole({ activeVisible, onCloseModal, onFinishModal }
     },
   ];
 
+  // 点击展开
+  const [expKeys, setExpKeys] = useState(false);
+  const onOpenMenu = () => {
+    if(expKeys){
+      setExpKeys(false)
+    } else {
+      let arr = []
+      groupList.current.map(item => {
+        arr.push(item.id)
+        
+      })
+      setExpKeys(arr)
+    }
+  }
+
   const rowSelection = {
     onChange: (selectedRowKeys) => {
       setSelectedRowKeys(`${selectedRowKeys}`)
@@ -59,9 +74,18 @@ export default function GroupRole({ activeVisible, onCloseModal, onFinishModal }
           columns={columns}
           rowSelection={{ ...rowSelection }}
           dataSource={ groupList.current }
+          expandedRowKeys={ expKeys }
+          pagination={false}
         />
-        <Button onClick={(e) => {e.preventDefault();e.stopPropagation();onCloseModal()}}>关闭</Button>
-        <Button type="primary" onClick={(e) => {e.preventDefault();e.stopPropagation();onFinishModal( selectedRowKeys )}} style={{ marginLeft:10 }}>
+    
+        <Button 
+          onClick={ onOpenMenu }
+          style={{ marginTop:15}}
+        >
+          展开或折叠全部
+        </Button>
+        <Button style={{ marginTop:15, marginLeft:15}} onClick={(e) => {e.preventDefault();e.stopPropagation();onCloseModal()}}>关闭</Button>
+        <Button style={{ marginTop: 15, marginLeft:15}} type="primary" onClick={(e) => {e.preventDefault();e.stopPropagation();onFinishModal( selectedRowKeys )}}>
           提交
         </Button>
       </Drawer>

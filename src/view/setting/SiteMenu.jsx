@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef} from 'react'
 import { toJS } from 'mobx'
 import { useStore as rootStore } from '../../store'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
@@ -10,7 +10,6 @@ function SiteMenu() {
   // 数据
   const { menuStore } = rootStore()
   const [ siteMenu, setSiteMenu ] = useState([])
-
 
   // 列表字段
   const columns = [
@@ -121,12 +120,19 @@ function SiteMenu() {
   };
 
   // 点击展开
-  // const [expKeys, setExpKeys] = useState([]);
-  // const onOpenMenu = () => {
-  //   siteMenu.list.map(item => {
-  //     console.log(item);
-  //   })
-  // }
+  const [expKeys, setExpKeys] = useState(false);
+  const onOpenMenu = () => {
+    if(expKeys){
+      setExpKeys(false)
+    } else {
+      let arr = []
+      siteMenu.map(item => {
+        arr.push(item.id)
+        
+      })
+      setExpKeys(arr)
+    }
+  }
 
   return (
     <div>
@@ -145,7 +151,7 @@ function SiteMenu() {
                   添加节点
                 </Button>
               </Form.Item>
-              {/* <Form.Item>
+              <Form.Item>
                 <Button 
                   type="primary"
                   onClick={ onOpenMenu }
@@ -153,7 +159,7 @@ function SiteMenu() {
                 >
                   展开或折叠全部
                 </Button>
-              </Form.Item> */}
+              </Form.Item>
             </Row>
         </Form>
       </Card>
@@ -163,8 +169,8 @@ function SiteMenu() {
         rowKey="id"
         columns={columns}
         dataSource={ toJS(siteMenu) }
-        pagination={false}
-        defaultExpandAllRows={true}
+        pagination={ false }
+        expandedRowKeys={ expKeys }
       />
     </Card>
     <SiteMenuEdit 
